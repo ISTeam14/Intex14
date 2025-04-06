@@ -1,0 +1,46 @@
+# Node.js dependencies
+frontend/node_modules/
+
+# ASP.NET build files
+backend/Intex/Intex/bin/
+backend/Intex/Intex/obj/
+
+# MacOS system files
+.DS_Store
+__MACOSX/
+
+# Compiled files
+backend/Intex/Intex/wwwroot/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+dist
+dist-ssr
+*.local
+
+# Environment variables
+*.env
+frontend/.env.local
+
+# IDE/editor-specific files
+.vscode/
+!.vscode/extensions.json
+.vs/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.csproj.user
+
+# Coverage and test results
+coverage/
+test-results/
+
+# Editor directories and files
+.vscode/*
