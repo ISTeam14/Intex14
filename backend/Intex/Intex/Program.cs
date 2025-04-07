@@ -1,6 +1,10 @@
+using Intex.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 
@@ -11,6 +15,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DbContext>(options => // Need to change DbContext to our DbContext later
     options.UseSqlite(builder.Configuration.GetConnectionString("SomethingConnection"))); // Need to change SomethingConnection later
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
+
 
 builder.Services.AddCors(options =>
 {
@@ -24,6 +32,11 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,10 +48,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+app.MapIdentityApi<IdentityUser>();
