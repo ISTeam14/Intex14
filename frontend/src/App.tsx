@@ -1,10 +1,17 @@
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
 
 function App() {
   return (
     <>
-      <h1>Good Luck on Intex Team 14!!</h1>
-      <h2>We got this!!!</h2>
+      <Router>
+        <Routes>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/movie" element={<MoviePage />} />
+        </Routes>
+      </Router>
     </>
   );
 }

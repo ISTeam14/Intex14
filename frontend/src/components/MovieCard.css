@@ -1,0 +1,124 @@
+/* MovieCard.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0e0e10;
+  color: #ffffff;
+}
+
+.movie-feature {
+  position: relative;
+  padding: 2rem;
+}
+
+.background-image {
+  background: url('/path/to/your/background.jpg') center center / cover
+    no-repeat;
+  filter: brightness(0.4);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 450px;
+  z-index: 0;
+  border-radius: 0.5rem;
+}
+
+.movie-info-overlay {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.main-title {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.movie-meta {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.movie-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.button-row {
+  margin-top: 1.5rem;
+}
+
+.play-button,
+.trailer-button {
+  padding: 0.75rem 1.5rem;
+  margin-right: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.play-button {
+  background-color: #ffffff;
+  color: #000;
+}
+
+.trailer-button {
+  background-color: #5c5c5c;
+  color: #fff;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 2rem;
+  border-bottom: 1px solid #333;
+}
+
+.tab {
+  background: none;
+  color: #ccc;
+  border: none;
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.tab.active {
+  color: #fff;
+  border-bottom: 3px solid #fff;
+}
+
+.suggested-movies {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  overflow-x: auto;
+}
+
+.movie-card {
+  background-color: #1e1e22;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.suggested-title {
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: #ff6b6b;
+}
