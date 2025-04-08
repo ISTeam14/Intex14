@@ -191,7 +191,7 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
 
           {activeTab === 'suggested' && (
             <section className="suggested-movies">
-            <MovieMiniCards onSelect={setShowId} show_id={show_id} />
+              <MovieMiniCards onSelect={setShowId} show_id={show_id} />
             </section>
           )}
 
