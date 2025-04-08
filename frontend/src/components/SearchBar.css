@@ -24,7 +24,7 @@
 
 .search-button {
   padding: 0.75rem 1.5rem;
-  background-color: #a259ff;
+  background-color: #cc00ff;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -38,4 +38,24 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   justify-content: flex-start;
+}
+
+.clear-filters {
+  margin-top: 1rem;
+}
+
+.clear-button {
+  background-color: transparent;
+  color: #cc00ff;
+  border: 1px solid #cc00ff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-button:hover {
+  background-color: #cc00ff;
+  color: #fff;
 }
