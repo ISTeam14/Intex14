@@ -23,11 +23,11 @@ namespace Intex.Controllers
             return Ok(new { movie });
         }
 
-        [HttpGet("GetMovies/{title}")]
-        public IActionResult GetMovies(string title)
+        [HttpGet("GetMovies/{show_id}")]
+        public IActionResult GetMovies(string show_id)
         {
             // Step 1: Get show_id for the given title
-            var baseMovie = _context.movies_titles.FirstOrDefault(m => m.title.ToLower() == title.ToLower());
+            var baseMovie = _context.movies_titles.Find(show_id);
 
             if (baseMovie == null)
             {
