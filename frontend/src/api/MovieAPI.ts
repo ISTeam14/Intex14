@@ -41,3 +41,12 @@ export const fetchMovies = async (): Promise<FetchMoviesResponse> => {
     throw error;
   }
 };
+
+export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
+  const response = await fetch(
+    `https://localhost:5000/Movie/GetMoviesByGenre?genre=${genre}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch movies.');
+  const data = await response.json();
+  return data.movies;
+};

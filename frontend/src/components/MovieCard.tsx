@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchMovie } from '../api/MovieAPI';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieCard.css';
 import MovieMiniCards from './MovieMiniCards';
@@ -12,12 +12,14 @@ interface MovieCardProps {
 
 function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const [movie, setMovie] = useState<Movie | null>(null);
-  const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'suggested' | 'details'>(
     'suggested'
   );
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [userRating, setUserRating] = useState<number | null>(null);
 
   const getGenre = (movie: any): string | null => {
     const possibleGenres = [
@@ -58,6 +60,33 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     return genre || null;
   };
 
+  const renderStars = (rating: number) => {
+    return (
+      <span>
+        {Array.from({ length: 5 }, (_, i) => (
+          <span key={i}>{i < Math.round(rating) ? '⭐' : '☆'}</span>
+        ))}
+      </span>
+    );
+  };
+
+  const handleUserRate = async (rating: number) => {
+    setUserRating(rating);
+
+    await fetch(`https://localhost:5000/Movie/SubmitRating`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ show_id, rating }),
+    });
+
+    // Refresh average
+    const res = await fetch(
+      `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+    );
+    const data = await res.json();
+    setAverageRating(data.average);
+  };
+
   const formatGenre = (genre: string) =>
     genre.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
@@ -83,6 +112,22 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     loadMovie();
   }, [show_id]);
 
+  useEffect(() => {
+    const fetchAverage = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+        );
+        const data = await response.json();
+        setAverageRating(data.average);
+      } catch (err) {
+        console.error('Error fetching average rating:', err);
+      }
+    };
+
+    fetchAverage();
+  }, [show_id]);
+
   if (loading) return <p className="loading">Loading Movie...</p>;
   if (error) return <p className="error">Error: {error}</p>;
   if (!movie) return <p className="error">No movie found.</p>;
@@ -103,7 +148,24 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
                 {movie.release_year} • {movie.duration} •{' '}
                 {movie.rating || 'N/A'} •{' '}
                 {formatGenre(getGenre(movie) ?? 'Unknown')}
+                {averageRating !== null && (
+                  <span>
+                    {' '}
+                    • {renderStars(averageRating)} ({averageRating})
+                  </span>
+                )}
               </p>
+              <div className="user-rating-stars">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <span
+                    key={i}
+                    style={{ cursor: 'pointer', fontSize: '1.5rem' }}
+                    onClick={() => handleUserRate(i + 1)}
+                  >
+                    {userRating !== null && i < userRating ? '⭐' : '☆'}
+                  </span>
+                ))}
+              </div>
               <p className="movie-description">{movie.description}</p>
               <div className="button-row">
                 <button className="play-button">▶ Play</button>

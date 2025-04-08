@@ -1,20 +1,63 @@
-import { useNavigate } from 'react-router-dom';
-import MovieMiniCards from '../components/MovieMiniCards';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchMoviesByGenre } from '../api/MovieAPI'; // adjust import as needed
+import { Movie } from '../types/Movie';
 import Header from '../components/Header';
+import CategoryRow from '../components/CategoryRow';
+import { useNavigate } from 'react-router-dom';
 
 function MoviesPage() {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Function to handle when a mini card is clicked
+  const [actionMovies, setActionMovies] = useState<Movie[]>([]);
+  const [comedies, setComedies] = useState<Movie[]>([]);
+  const [documentaries, setDocumentaries] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    const loadMovies = async () => {
+      try {
+        setLoading(true);
+
+        const [action, comedy, docs] = await Promise.all([
+          fetchMoviesByGenre('action'),
+          fetchMoviesByGenre('comedies'),
+          fetchMoviesByGenre('documentaries'),
+        ]);
+        setActionMovies(action);
+        setComedies(comedy);
+        setDocumentaries(docs);
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMovies();
+  }, []);
+
+  if (loading) return <p>Loading Movies...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   const handleSelect = (show_id: string) => {
     navigate('/movie', { state: { show_id } });
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}>
       <Header />
-      <MovieMiniCards onSelect={handleSelect} />
+      <CategoryRow
+        title="Action"
+        movies={actionMovies}
+        onSelect={handleSelect}
+      />
+      <CategoryRow title="Comedies" movies={comedies} onSelect={handleSelect} />
+      <CategoryRow
+        title="Documentaries"
+        movies={documentaries}
+        onSelect={handleSelect}
+      />
     </div>
   );
 }

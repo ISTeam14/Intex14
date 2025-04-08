@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchMovies } from '../api/MovieAPI';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieMiniCards.css';
 
@@ -10,12 +10,12 @@ interface MovieMiniCardsProps {
 
 function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
   const [movie, setMovie] = useState<Movie[]>([]);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const sanitizeFilename = (title: string) =>
-    title.replace(/[\\/&-:"*?<>|]+/g, '').trim();
+    title.replace(/[\\/&-:û"*?<>|]+/g, '').trim();
 
   const getPosterUrl = (title: string) =>
     `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
@@ -42,23 +42,25 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
 
   return (
     <>
-      {movie.map((m) => (
-        <div
-          key={m.show_id}
-          className="movie-mini-card"
-          onClick={() => onSelect(m.show_id)}
-          style={{ cursor: 'pointer' }}
-        >
-          <img
-            src={getPosterUrl(m.title)}
-            alt={`${m.title} poster`}
-            className="movie-poster"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/posters/default.jpg';
-            }}
-          />
-        </div>
-      ))}
+      <div className="mini-card-grid">
+        {movie.map((m) => (
+          <div
+            key={m.show_id}
+            className="movie-mini-card"
+            onClick={() => onSelect(m.show_id)}
+            style={{ cursor: 'pointer' }}
+          >
+            <img
+              src={getPosterUrl(m.title)}
+              alt={`${m.title} poster`}
+              className="movie-poster"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/posters/default.jpg';
+              }}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
 }

@@ -1,20 +1,26 @@
 import { NavLink } from 'react-router-dom';
+import './NavMenu.css';
 
 function NavMenu() {
   return (
     <nav>
-      <menu>
+      <ul className="nav-menu">
         <li>
-          <NavLink className="nav-link" to="home">
+          <NavLink className="nav-link" to="/home">
             Home
           </NavLink>
         </li>
         <li>
-          <NavLink className="nav-link" to="logout">
+          <NavLink className="nav-link" to="/admin">
+            Admin
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="nav-link" to="/logout">
             Logout
           </NavLink>
         </li>
-      </menu>
+      </ul>
     </nav>
   );
 }
