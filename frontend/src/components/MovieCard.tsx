@@ -91,7 +91,7 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     genre.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
   const sanitizeFilename = (title: string) =>
-    title.replace(/[\\/&-:"*?<>|]+/g, '').trim();
+    title.replace(/[\\\/&:.()'"*!?<>|\-]+/g, '').trim();
 
   const getPosterUrl = (title: string) =>
     `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
@@ -191,7 +191,7 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
 
           {activeTab === 'suggested' && (
             <section className="suggested-movies">
-            <MovieMiniCards onSelect={setShowId} show_id={show_id} />
+              <MovieMiniCards onSelect={setShowId} show_id={show_id} />
             </section>
           )}
 

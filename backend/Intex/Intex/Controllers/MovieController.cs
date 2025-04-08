@@ -77,6 +77,20 @@ namespace Intex.Controllers
             return Ok(new { average = Math.Round(avgRating, 1) });
         }
 
+        [HttpGet("SearchMovies")]
+        public IActionResult SearchMovies([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(new List<movies_titles>());
+
+            var movies = _context.movies_titles
+                .Where(m => m.title.ToLower().Contains(query.ToLower()))
+                .Take(50)
+                .ToList();
+
+            return Ok(new { movies });
+        }
+
         //[HttpPost("SubmitRating")]
         //public IActionResult SubmitRating([FromBody] movies_ratings newRating)
         //{

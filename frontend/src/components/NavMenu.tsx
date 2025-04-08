@@ -11,6 +11,11 @@ function NavMenu() {
           </NavLink>
         </li>
         <li>
+          <NavLink className="nav-link" to="/search">
+            Search
+          </NavLink>
+        </li>
+        <li>
           <NavLink className="nav-link" to="/admin">
             Admin
           </NavLink>
