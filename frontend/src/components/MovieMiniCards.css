@@ -1,0 +1,34 @@
+.movie-mini-card {
+  width: 180px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding: 1rem;
+}
+
+.movie-mini-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-poster {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-poster:hover {
+  transform: scale(1.05);
+}
+
+.mini-card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+}

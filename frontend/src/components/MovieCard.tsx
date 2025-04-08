@@ -3,16 +3,21 @@ import { fetchMovie } from '../api/MovieAPI';
 import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieCard.css';
+import MovieMiniCards from './MovieMiniCards';
 
 interface MovieCardProps {
   show_id: string;
+  setShowId: (id: string) => void;
 }
 
-function MovieCard({ show_id }: MovieCardProps) {
+function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const [movie, setMovie] = useState<Movie | null>(null);
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'suggested' | 'details'>(
+    'suggested'
+  );
 
   const getGenre = (movie: any): string | null => {
     const possibleGenres = [
@@ -56,8 +61,11 @@ function MovieCard({ show_id }: MovieCardProps) {
   const formatGenre = (genre: string) =>
     genre.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
+  const sanitizeFilename = (title: string) =>
+    title.replace(/[\\/&-:"*?<>|]+/g, '').trim();
+
   const getPosterUrl = (title: string) =>
-    `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(title.trim())}.jpg`;
+    `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
 
   useEffect(() => {
     const loadMovie = async () => {
@@ -80,35 +88,97 @@ function MovieCard({ show_id }: MovieCardProps) {
   if (!movie) return <p className="error">No movie found.</p>;
 
   return (
-    <div className="movie-feature">
-      <div
-        className="background-image"
-        style={{
-          backgroundImage: `url(${getPosterUrl(movie.title)})`,
-        }}
-      ></div>
-      <div className="movie-info-overlay">
-        <h1 className="main-title">{movie.title}</h1>
-        <p className="movie-meta">
-          {movie.release_year} • {movie.duration} •{' '}
-          {formatGenre(getGenre(movie) ?? 'Unknown')}
-        </p>
-        <p className="movie-description">{movie.description}</p>
-        <div className="button-row">
-          <button className="play-button">▶ Play</button>
-          <button className="trailer-button">Trailer</button>
+    <>
+      <div className="movie-feature">
+        <div
+          className="background-image"
+          style={{ backgroundImage: `url(${getPosterUrl(movie.title)})` }}
+        ></div>
+
+        <div className="content-wrapper">
+          <div className="movie-content">
+            <div className="movie-info-overlay">
+              <h1 className="main-title">{movie.title}</h1>
+              <p className="movie-meta">
+                {movie.release_year} • {movie.duration} •{' '}
+                {movie.rating || 'N/A'} •{' '}
+                {formatGenre(getGenre(movie) ?? 'Unknown')}
+              </p>
+              <p className="movie-description">{movie.description}</p>
+              <div className="button-row">
+                <button className="play-button">▶ Play</button>
+                <button className="trailer-button">Trailer</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="tabs">
+            <button
+              className={`tab ${activeTab === 'suggested' ? 'active' : ''}`}
+              onClick={() => setActiveTab('suggested')}
+            >
+              Suggested
+            </button>
+            <button
+              className={`tab ${activeTab === 'details' ? 'active' : ''}`}
+              onClick={() => setActiveTab('details')}
+            >
+              Details
+            </button>
+          </div>
+
+          {activeTab === 'suggested' && (
+            <section className="suggested-movies">
+              <MovieMiniCards onSelect={setShowId} />
+            </section>
+          )}
+
+          {activeTab === 'details' && (
+            <section className="details-section">
+              <div className="details-grid">
+                <div>
+                  <p>
+                    <strong>Duration:</strong> {movie.duration || 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Release Date:</strong> {movie.release_year || 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Genre:</strong>{' '}
+                    {formatGenre(getGenre(movie) ?? 'N/A')}
+                  </p>
+                  <p>
+                    <strong>Rating:</strong> {movie.rating || 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Director:</strong> {movie.director || 'N/A'}
+                  </p>
+                </div>
+
+                <div>
+                  <p>
+                    <strong>Cast:</strong>
+                  </p>
+                  {(() => {
+                    console.log('Cast string:', movie.cast);
+                    return null;
+                  })()}
+                  <ul className="cast-list">
+                    {movie.cast ? (
+                      movie.cast
+                        .split(/,|\|/)
+                        .map((actor, idx) => <li key={idx}>{actor.trim()}</li>)
+                    ) : (
+                      <li>N/A</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </div>
-
-      <div className="tabs">
-        <button className="tab active">Suggested</button>
-        <button className="tab">Details</button>
-      </div>
-
-      <section className="suggested-movies">
-        {/* If you plan to fetch or show more movies here later */}
-      </section>
-    </div>
+    </>
   );
 }
 
