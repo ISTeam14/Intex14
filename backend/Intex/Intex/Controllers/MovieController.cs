@@ -23,14 +23,33 @@ namespace Intex.Controllers
             return Ok(new { movie });
         }
 
-        [HttpGet("GetMovies")]
-        public IActionResult GetMovies()
+        [HttpGet("GetMovies/{title}")]
+        public IActionResult GetMovies(string title)
         {
-            var query = _context.movies_titles.AsQueryable();
+            // Step 1: Get show_id for the given title
+            var baseMovie = _context.movies_titles.FirstOrDefault(m => m.title.ToLower() == title.ToLower());
 
-            var movies = query.Take(10).ToList();
+            if (baseMovie == null)
+            {
+                return NotFound(new { message = "Movie not found." });
+            }
 
-            return Ok(new { movies });
+            var baseShowId = baseMovie.show_id;
+
+            // Step 2: Get recommended show_ids from content_recs
+            var recommendations = _context.content_recs
+                .Where(r => r.base_show_id == baseShowId)
+                .OrderByDescending(r => r.similarity_score)
+                .Select(r => r.recommended_show_id)
+                .ToList();
+
+            // Step 3: Get movie info for those recommended show_ids
+            var recommendedMovies = _context.movies_titles
+                .Where(m => recommendations.Contains(m.show_id))
+                .ToList();
+
+            return Ok(new { recommendedMovies });
         }
+
     }
 }
