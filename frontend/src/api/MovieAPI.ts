@@ -50,3 +50,11 @@ export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
   const data = await response.json();
   return data.movies;
 };
+
+export const searchMovies = async (query: string): Promise<Movie[]> => {
+  const res = await fetch(
+    `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`
+  );
+  const data = await res.json();
+  return data.movies;
+};

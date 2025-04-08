@@ -15,7 +15,7 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
   const [loading, setLoading] = useState(true);
 
   const sanitizeFilename = (title: string) =>
-    title.replace(/[\\/&-:û"*?<>|]+/g, '').trim();
+    title.replace(/[\\\/&:.()'"*!?<>|\-]+/g, '').trim();
 
   const getPosterUrl = (title: string) =>
     `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
