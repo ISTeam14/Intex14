@@ -5,10 +5,11 @@ import { Movie } from '../types/Movie';
 import './MovieMiniCards.css';
 
 interface MovieMiniCardsProps {
+  show_id: string;
   onSelect: (show_id: string) => void;
 }
 
-function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
+function MovieMiniCards({ show_id, onSelect }: MovieMiniCardsProps) {
   const [movie, setMovie] = useState<Movie[]>([]);
   // const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +25,9 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
     const loadMovies = async () => {
       try {
         setLoading(true);
-        const data = await fetchMovies();
+        const data = await fetchMovies(show_id);
 
-        setMovie(data.movies);
+    setMovie(data.recommendedMovies);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -35,7 +36,7 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
     };
 
     loadMovies();
-  }, []);
+  }, [show_id]);
 
   if (loading) return <p>Loading Movies...</p>;
   if (error) return <p>Error: {error}</p>;
