@@ -40,4 +40,5 @@ export interface Movie {
   tv_comedies: number;
   talk_shows_tv_comedies: number;
   thrillers: number;
+  // genre: string; // Add genre property
 }

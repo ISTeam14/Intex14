@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&display=swap');
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +41,181 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Table styling */
+.custom-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 0.875rem;
+}
+
+.custom-table thead {
+  background-color: #443b56; /* dark gray */
+  color: #e0e0e0;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.custom-table tbody {
+  background-color: #2d2a30; /* black background */
+}
+
+.custom-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #333;
+}
+.custom-table tbody tr:hover {
+  background-color: #444; /* dark gray on hover */
+}
+/* general button */
+.pill-button {
+  display: inline-flex; /* or inline-block */
+  justify-content: center;
+  align-items: center;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid #ccc;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 70px;
+  text-align: center;
+}
+
+.pill-button:hover {
+  background-color: #333;
+}
+
+.pill-button.add {
+  padding: 10px 24px;           /* Taller and wider */
+  font-size: 1rem;              /* Base font size (16px) */
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid #37b264;    /* Light green border */
+  color: #78eaa2;               /* Light green text */
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pill-button.add:hover {
+  background-color: rgba(55, 178, 100, 0.1); /* soft green tint on hover */
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.button-stack .pill-button + .pill-button {
+  margin-top: 8px; /* Adds gap ONLY between stacked buttons */
+}
+
+/* pagination button */
+.pagination-button {
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 12px;           /* Rounded but not full pill */
+  border: 1px solid #ccc;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  min-width: 48px;
+  text-align: center;
+}
+
+.pagination-button:hover {
+  background-color: #333;
+}
+
+.pagination-button.active {
+  background-color: #444;
+  color: #ccc;
+  cursor: default;
+}
+
+/* form fix */
+.movie-form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #181818; /* main form background */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  color: white;
+}
+
+/* New header container inside the form */
+.movie-form-header {
+  background-color: #2a2a2a; /* lighter gray just for the header */
+  padding: 1rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  margin: -2rem; /* pull it out to match the container padding */
+  margin-bottom: 1.5rem;
+}
+
+/* Header text styling */
+.movie-form-header h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+  color: #f5f5f5;
+}
+
+.movie-form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  width: 100%;
+}
+.form-label {
+  min-width: 120px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #e5e5e5;
+}
+
+.form-input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #1a1a1a;
+  color: white;
+  max-width: 300px;
+}
+
+.movie-form-fields {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center fields horizontally */
+  gap: 1rem; /* Space between fields */
+}
+
+.movie-form-fields .form-group {
+  width: 100%;
+  max-width: 400px;
 }
