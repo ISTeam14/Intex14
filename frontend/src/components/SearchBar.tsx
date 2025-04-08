@@ -1,28 +1,48 @@
-import { useState } from 'react';
-import { searchMovies } from '../api/MovieAPI';
+import { useEffect, useState } from 'react';
 import { Movie } from '../types/Movie';
 import './SearchBar.css';
 import { useNavigate } from 'react-router-dom';
+import GenreFilter from './GenreFilter';
 
 function SearchBar() {
   const [query, setQuery] = useState('');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (query.trim() !== '' || selectedGenres.length > 0) {
+      // Create a fake submit event to trigger the search logic
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      handleSearch(fakeEvent);
+    }
+  }, [selectedGenres]);
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query) return;
-
     setLoading(true);
     try {
-      const movies = await searchMovies(query);
-      setResults(movies);
+      let url = `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`;
+      if (selectedGenres.length > 0) {
+        url += `&genres=${selectedGenres.join(',')}`;
+      }
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Bad response from search API');
+
+      const data = await res.json();
+      setResults(data.movies || []);
     } catch (error) {
       console.error('Search failed:', error);
+      setResults([]); // fallback
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClearFilters = () => {
+    setSelectedGenres([]);
   };
 
   const sanitizeFilename = (title: string) =>
@@ -42,6 +62,17 @@ function SearchBar() {
           Search
         </button>
       </form>
+
+      <GenreFilter
+        selectedGenres={selectedGenres}
+        setSelectedGenres={setSelectedGenres}
+      />
+
+      <div className="clear-filters">
+        <button onClick={handleClearFilters} className="clear-button">
+          Clear All Filters
+        </button>
+      </div>
 
       {loading && <p>Loading...</p>}
 
