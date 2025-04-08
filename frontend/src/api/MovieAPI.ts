@@ -29,7 +29,6 @@ export const fetchMovie = async (
 
 export const fetchMovies = async (
   show_id: string
-
 ): Promise<FetchMoviesResponse> => {
   try {
     const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
@@ -60,4 +59,17 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
   );
   const data = await res.json();
   return data.movies;
+};
+
+export const fetchRecommendedMovies = async (
+  show_id: string
+): Promise<Movie[]> => {
+  const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch recommended movies.');
+  }
+
+  const data = await response.json();
+  return data.recommendedMovies;
 };
