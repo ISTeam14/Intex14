@@ -10,18 +10,18 @@ function MoviePage() {
   const initialShowId = location.state?.show_id || 's12';
   const [selectedShowId, setSelectedShowId] = useState<string>(initialShowId);
 
-  // Optional: update only if navigating again with a new show_id
+  // Update only if navigating again with a new show_id
   useEffect(() => {
     if (location.state?.show_id && location.state.show_id !== selectedShowId) {
       setSelectedShowId(location.state.show_id);
     }
-  }, [location.state?.show_id]);
+  }, [location.state?.show_id, selectedShowId]);
 
   return (
-    <>
+    <div style={{ paddingTop: '80px' }}>
       <Header />
-      <MovieCard show_id={selectedShowId} setShowId={setSelectedShowId} />;
-    </>
+      <MovieCard show_id={selectedShowId} setShowId={setSelectedShowId} />
+    </div>
   );
 }
 
