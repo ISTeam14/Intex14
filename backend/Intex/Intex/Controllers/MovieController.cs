@@ -67,6 +67,41 @@ namespace Intex.Controllers
             return Ok(new { movies });
         }
 
+        [HttpGet("GetMoviesByGenrePaged")]
+        public IActionResult GetMoviesByGenrePaged(
+            [FromQuery] string genre,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            if (string.IsNullOrWhiteSpace(genre))
+                return BadRequest(new { message = "Genre is required." });
+
+            var query = _context.movies_titles.AsQueryable();
+
+            // Filter by genre dynamically
+            query = genre.ToLower() switch
+            {
+                "action" => query.Where(m => m.action == 1),
+                "comedies" => query.Where(m => m.comedies == 1),
+                "documentaries" => query.Where(m => m.documentaries == 1),
+                "dramas" => query.Where(m => m.dramas == 1),
+                "horror_movies" => query.Where(m => m.horror_movies == 1),
+                "fantasy" => query.Where(m => m.fantasy == 1),
+                "family_movies" => query.Where(m => m.family_movies == 1),
+                _ => Enumerable.Empty<movies_titles>().AsQueryable()
+            };
+
+            var total = query.Count();
+
+            var movies = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(new { movies, total });
+        }
+
+
         [HttpGet("GetAverageRating/{show_id}")]
         public IActionResult GetAverageRating(string show_id)
         {
