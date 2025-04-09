@@ -1,0 +1,186 @@
+/* LoginPage.css */
+
+body {
+  background-color: #0e0e10;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* ✅ vertically center */
+  height: 100vh; /* ✅ fill full screen height */
+  padding: 0 1rem;
+  box-sizing: border-box;
+  background-color: #0e0e10;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #1c1f26;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #cc00ff;
+  margin: 0 0 1rem 0; /* ✅ removes space above title */
+}
+
+.card-subtitle {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #bbb;
+  margin-bottom: 2rem;
+}
+
+.form-floating {
+  margin-bottom: 1.25rem;
+}
+
+.form-control {
+  width: 100%;
+  background-color: #2b2f38;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  border-color: #cc00ff;
+  box-shadow: 0 0 0 0.15rem rgba(204, 0, 255, 0.35);
+  outline: none;
+}
+
+label {
+  display: block;
+  text-align: left; /* ✅ left-aligns the label */
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: #ccc;
+  font-weight: 500; /* optional: adds weight for better readability */
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  background-color: #cc00ff;
+  border-color: #cc00ff;
+}
+
+.form-check-input::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+.form-check-input:checked::after {
+  opacity: 1;
+}
+
+.form-check-input:hover {
+  border-color: #cc00ff;
+}
+
+.btn-login {
+  background-color: #cc00ff;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-login:hover {
+  background-color: #a100cc;
+}
+
+.btn-google,
+.btn-facebook {
+  background-color: transparent;
+  border: 1px solid #888;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-google:hover,
+.btn-facebook:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+hr {
+  border-top: 1px solid #444;
+  margin: 2rem 0;
+}
+
+.error {
+  color: #ff6b6b;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+.password-toggle {
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.show-password {
+  background: none;
+  border: none;
+  color: #cc00ff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: bold;
+}
+
+.show-password:hover {
+  text-decoration: underline;
+}

@@ -9,6 +9,7 @@ function SearchBar() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +22,7 @@ function SearchBar() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasSearched(true);
     setLoading(true);
     try {
       let url = `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`;
@@ -63,15 +65,17 @@ function SearchBar() {
         </button>
       </form>
 
-      <GenreFilter
-        selectedGenres={selectedGenres}
-        setSelectedGenres={setSelectedGenres}
-      />
+      <div className="filter-row">
+        <GenreFilter
+          selectedGenres={selectedGenres}
+          setSelectedGenres={setSelectedGenres}
+        />
 
-      <div className="clear-filters">
-        <button onClick={handleClearFilters} className="clear-button">
-          Clear All Filters
-        </button>
+        <div className="clear-filters">
+          <button onClick={handleClearFilters} className="clear-button">
+            Clear All Filters
+          </button>
+        </div>
       </div>
 
       {loading && <p>Loading...</p>}
@@ -98,7 +102,7 @@ function SearchBar() {
           </div>
         ))}
       </div>
-      {!loading && results.length === 0 && (
+      {!loading && hasSearched && results.length === 0 && (
         <p className="no-results">No results found.</p>
       )}
     </div>

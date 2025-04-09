@@ -53,8 +53,11 @@
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+  height: 40px; /* ✅ match height of filter button */
+  display: flex;
+  align-items: center;
 }
 
 .clear-button:hover {
@@ -71,4 +74,12 @@
 body {
   place-items: start;
   width: 100%;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* good for mobile */
+  margin-bottom: 1rem;
 }
