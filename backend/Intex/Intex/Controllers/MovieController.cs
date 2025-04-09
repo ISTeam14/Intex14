@@ -78,18 +78,37 @@ namespace Intex.Controllers
         }
 
         [HttpGet("SearchMovies")]
-        public IActionResult SearchMovies([FromQuery] string query)
+        public IActionResult SearchMovies([FromQuery] string query, [FromQuery] string? genres)
         {
-            if (string.IsNullOrWhiteSpace(query))
-                return Ok(new List<movies_titles>());
-
-            var movies = _context.movies_titles
-                .Where(m => m.title.ToLower().Contains(query.ToLower()))
-                .Take(50)
+            var genreList = (genres ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(g => g.ToLower())
                 .ToList();
 
-            return Ok(new { movies });
+            var movies = _context.movies_titles.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                movies = movies.Where(m => m.title.ToLower().Contains(query.ToLower()));
+            }
+
+            if (genreList.Any())
+            {
+                movies = movies.Where(m =>
+                    (genreList.Contains("action") && m.action == 1) ||
+                    (genreList.Contains("comedies") && m.comedies == 1) ||
+                    (genreList.Contains("documentaries") && m.documentaries == 1) ||
+                    (genreList.Contains("dramas") && m.dramas == 1) ||
+                    (genreList.Contains("family_movies") && m.family_movies == 1) ||
+                    (genreList.Contains("fantasy") && m.fantasy == 1) ||
+                    (genreList.Contains("horror_movies") && m.horror_movies == 1)
+                );
+            }
+
+            return Ok(new { movies = movies.Take(50).ToList() });
         }
+
+
 
         //[HttpPost("SubmitRating")]
         //public IActionResult SubmitRating([FromBody] movies_ratings newRating)
