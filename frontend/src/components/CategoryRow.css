@@ -1,6 +1,16 @@
 .category-row {
   margin-bottom: 3rem;
   padding-left: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .category-title {

@@ -13,6 +13,11 @@ interface FetchPagesResponse {
   totalNumMovies: number; // Added this property
 }
 
+interface FetchMoviesByGenrePagedResponse {
+  movies: Movie[];
+  total: number;
+}
+
 const API_URL = 'https://localhost:5000/Movie';
 
 export const fetchMovie = async (
@@ -77,6 +82,31 @@ export const fetchRecommendedMovies = async (
 
   const data = await response.json();
   return data.recommendedMovies;
+};
+
+export const fetchMoviesByGenrePaged = async (
+  genre: string,
+  page: number,
+  pageSize: number
+): Promise<FetchMoviesByGenrePagedResponse> => {
+  try {
+    const response = await fetch(
+      `${API_URL}/GetMoviesByGenrePaged?genre=${genre}&page=${page}&pageSize=${pageSize}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch paged movies by genre.');
+    }
+
+    const data = await response.json();
+    return {
+      movies: data.movies,
+      total: data.total,
+    };
+  } catch (error) {
+    console.error('Error fetching paged genre movies:', error);
+    throw error;
+  }
 };
 
 export const fetchPages = async (
