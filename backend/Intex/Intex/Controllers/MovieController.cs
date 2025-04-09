@@ -39,7 +39,7 @@ namespace Intex.Controllers
             var baseShowId = baseMovie.show_id;
 
             // Step 2: Get recommended show_ids from content_recs
-            var recommendations = _context.content_recs
+            var recommendations = _context.hybrid_recs
                 .Where(r => r.base_show_id == baseShowId)
                 .OrderByDescending(r => r.similarity_score)
                 .Select(r => r.recommended_show_id)
