@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Identity.css';
-import '@fortawesome/fontawesome-free/css/all.css';
 
 function LoginPage() {
   // state variables for email and passwords
@@ -62,7 +60,7 @@ function LoginPage() {
         throw new Error(data?.message || 'Invalid email or password.');
       }
 
-      navigate('/competition');
+      navigate('/home');
     } catch (error: any) {
       setError(error.message || 'Error logging in.');
       console.error('Fetch attempt failed:', error);
@@ -70,7 +68,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="container">
+    <div className="">
       <div className="row">
         <div className="card border-0 shadow rounded-3 ">
           <div className="card-body p-4 p-sm-5">
