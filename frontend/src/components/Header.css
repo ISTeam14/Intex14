@@ -1,0 +1,51 @@
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #1b2735;
+  opacity: 0.875;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+header h1 {
+  font-size: 1.5rem;
+}
+
+/* Make header images responsive */
+header img {
+  max-width: 100%;
+  height: auto;
+}
+
+.logo-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.logo-text {
+  color: #cc00ff; /* or any other shade of purple you like */
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+nav menu {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+nav menu li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav menu li a:hover {
+  text-decoration: underline;
+}
