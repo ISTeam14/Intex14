@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
-import { fetchMovies } from '../api/MovieAPI';
+import { fetchRecommendedMovies } from '../api/MovieAPI';
 // import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieMiniCards.css';
 
 interface MovieMiniCardsProps {
+  show_id: string;
   onSelect: (show_id: string) => void;
 }
 
-function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
+function MovieMiniCards({ show_id, onSelect }: MovieMiniCardsProps) {
   const [movie, setMovie] = useState<Movie[]>([]);
   // const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const sanitizeFilename = (title: string) =>
-    title.replace(/[\\/&-:û"*?<>|]+/g, '').trim();
+    title.replace(/[\\\/&:.()'"*!?<>|\-]+/g, '').trim();
 
   const getPosterUrl = (title: string) =>
     `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
@@ -24,9 +25,8 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
     const loadMovies = async () => {
       try {
         setLoading(true);
-        const data = await fetchMovies();
-
-        setMovie(data.movies);
+        const recommended = await fetchRecommendedMovies(show_id);
+        setMovie(recommended);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -35,7 +35,7 @@ function MovieMiniCards({ onSelect }: MovieMiniCardsProps) {
     };
 
     loadMovies();
-  }, []);
+  }, [show_id]);
 
   if (loading) return <p>Loading Movies...</p>;
   if (error) return <p>Error: {error}</p>;
