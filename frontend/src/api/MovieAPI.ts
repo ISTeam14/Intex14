@@ -5,7 +5,7 @@ interface FetchMovieResponse {
   totalNumMovies: number;
 }
 
-interface FetchMoviesResponse {
+interface FetchPagesResponse {
   movies: Movie[];
   totalNumMovies: number; // Added this property
 }
@@ -29,14 +29,14 @@ export const fetchMovie = async (
   }
 };
 
-export const fetchMovies = async (
+export const fetchPages = async (
     pageSize: number,
     pageNum: number,
     
 
-): Promise<FetchMoviesResponse> => {
+): Promise<FetchPagesResponse> => {
   try {
-    const response = await fetch(`${API_URL}/GetMovies?pageHowMany=${pageSize}&pageNum=${pageNum}`);
+    const response = await fetch(`${API_URL}/GetMoviePages?pageHowMany=${pageSize}&pageNum=${pageNum}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch movie.');

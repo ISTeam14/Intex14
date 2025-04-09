@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Movie } from "../types/Movie";
-import { fetchMovies, deleteMovie } from "../api/MovieAPI"; 
+import { fetchPages, deleteMovie } from "../api/MovieAPI"; 
 import Pagination from "../components/Pagination";
 import NewMovieForm from "../components/NewMovieForm";
 import EditMovieForm from "../components/EditMovieForm";
@@ -20,7 +20,7 @@ const AdminPage = () => {
     useEffect(() => {
         const loadMovies = async () => {
             try {
-                const data = await fetchMovies(pageSize, pageNum);
+                const data = await fetchPages(pageSize, pageNum);
                 setMovies(data.movies);
                 setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
             } catch (error) {
@@ -101,7 +101,7 @@ const AdminPage = () => {
                 <NewMovieForm
                     onSuccess={() => {
                         setShowForm(false);
-                        fetchMovies(pageSize, pageNum).then((data) => setMovies(data.movies));
+                        fetchPages(pageSize, pageNum).then((data) => setMovies(data.movies));
                     }}
                     onCancel={() => setShowForm(false)}
                 />
@@ -112,7 +112,7 @@ const AdminPage = () => {
                     movie={editingMovie}
                     onSuccess={() => {
                         setEditingMovie(null);
-                        fetchMovies(pageSize, pageNum).then((data) => setMovies(data.movies));
+                        fetchPages(pageSize, pageNum).then((data) => setMovies(data.movies));
                     }}
                     onCancel={() => setShowForm(false)}
                 />

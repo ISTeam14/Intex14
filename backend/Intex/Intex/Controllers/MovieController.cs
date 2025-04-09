@@ -22,8 +22,8 @@ namespace Intex.Controllers
             return Ok(new { movie });
         }
 
-        [HttpGet("GetMovies")]
-        public IActionResult GetMovies(int pageHowMany = 10, int pageNum = 1, [FromQuery] List<string>? bookTypes = null)
+        [HttpGet("GetMoviePages")] // Updated route
+        public IActionResult GetMoviePages(int pageHowMany = 10, int pageNum = 1)
         {
             var query = _context.movies_titles.AsQueryable();
 
