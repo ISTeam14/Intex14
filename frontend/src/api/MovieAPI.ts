@@ -37,6 +37,20 @@ export const fetchMovie = async (
   }
 };
 
+export const fetchUserRecs = async (
+  user_id: number
+): Promise<Movie[]> => {
+  const response = await fetch(`${API_URL}/GetUserRecs/${user_id}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user recommendations.');
+  }
+
+  const data = await response.json();
+  return data.recommendations;
+};
+
+
 export const fetchMovies = async (
   show_id: string
 ): Promise<FetchMoviesResponse> => {

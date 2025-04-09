@@ -23,6 +23,22 @@ namespace Intex.Controllers
             return Ok(new { movie });
         }
 
+
+        [HttpGet("GetUserRecs/{user_id}")]
+        public IActionResult GetUserRecs(int user_id)
+        {
+            var recs = _context.wide_deep_recs
+                .Where(r => r.UserId == user_id)
+                .OrderByDescending(r => r.PredictedRating)
+                .Take(10)
+                .Select(r => r.Show) // this is the full `movies_titles` object via navigation
+                .ToList();
+
+            return Ok(new { recommendations = recs });
+        }
+
+
+
         [HttpGet("GetMovies/{show_id}")]
         public IActionResult GetMovies(string show_id)
         {
