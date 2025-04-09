@@ -59,3 +59,9 @@
   background-color: #cc00ff;
   color: #fff;
 }
+
+.no-results {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-top: 1rem;
+}
