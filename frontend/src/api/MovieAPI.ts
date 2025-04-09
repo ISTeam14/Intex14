@@ -38,7 +38,9 @@ export const fetchMovies = async (
   show_id: string
 ): Promise<FetchMoviesResponse> => {
   try {
-    const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
+    const response = await fetch(`${API_URL}/GetMovies/${show_id}`, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movie.');
@@ -65,7 +67,10 @@ export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
 
 export const searchMovies = async (query: string): Promise<Movie[]> => {
   const res = await fetch(
-    `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`
+    `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`,
+    {
+      credentials: 'include',
+    }
   );
   const data = await res.json();
   return data.movies;
@@ -74,7 +79,9 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
 export const fetchRecommendedMovies = async (
   show_id: string
 ): Promise<Movie[]> => {
-  const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
+  const response = await fetch(`${API_URL}/GetMovies/${show_id}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch recommended movies.');
@@ -90,7 +97,10 @@ export const fetchPages = async (
 ): Promise<FetchPagesResponse> => {
   try {
     const response = await fetch(
-      `${API_URL}/GetMoviePages?pageHowMany=${pageSize}&pageNum=${pageNum}`
+      `${API_URL}/GetMoviePages?pageHowMany=${pageSize}&pageNum=${pageNum}`,
+      {
+        credentials: 'include',
+      }
     );
 
     if (!response.ok) {
@@ -109,6 +119,7 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(`${API_URL}/DeleteMovie/${show_id}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -129,6 +140,7 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
       },
       body: JSON.stringify(newMovie),
     });
@@ -153,6 +165,7 @@ export const updateMovie = async (
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
       },
       body: JSON.stringify(updatedMovie),
     });

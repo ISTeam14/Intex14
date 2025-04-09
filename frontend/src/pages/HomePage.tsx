@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchMoviesByGenre } from '../api/MovieAPI'; // adjust import as needed
+import { fetchMoviesByGenre } from '../api/MovieAPI';
 import { Movie } from '../types/Movie';
 import Header from '../components/Header';
 import CategoryRow from '../components/CategoryRow';
@@ -7,6 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import AuthorizeView from '../components/AuthorizeView';
 
 function MoviesPage() {
+  return (
+    <AuthorizeView>
+      <AuthorizedMoviesContent />
+    </AuthorizeView>
+  );
+}
+
+function AuthorizedMoviesContent() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +27,6 @@ function MoviesPage() {
     const loadMovies = async () => {
       try {
         setLoading(true);
-
         const [action, comedy, docs] = await Promise.all([
           fetchMoviesByGenre('action'),
           fetchMoviesByGenre('comedies'),
@@ -38,34 +45,28 @@ function MoviesPage() {
     loadMovies();
   }, []);
 
-  if (loading) return <p>Loading Movies...</p>;
-  if (error) return <p>Error: {error}</p>;
-
   const handleSelect = (show_id: string) => {
     navigate('/movie', { state: { show_id } });
   };
 
+  if (loading) return <p>Loading Movies...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <AuthorizeView>
-      <div style={{ paddingTop: '80px' }}>
-        <Header />
-        <CategoryRow
-          title="Action"
-          movies={actionMovies}
-          onSelect={handleSelect}
-        />
-        <CategoryRow
-          title="Comedies"
-          movies={comedies}
-          onSelect={handleSelect}
-        />
-        <CategoryRow
-          title="Documentaries"
-          movies={documentaries}
-          onSelect={handleSelect}
-        />
-      </div>
-    </AuthorizeView>
+    <div style={{ paddingTop: '80px' }}>
+      <Header />
+      <CategoryRow
+        title="Action"
+        movies={actionMovies}
+        onSelect={handleSelect}
+      />
+      <CategoryRow title="Comedies" movies={comedies} onSelect={handleSelect} />
+      <CategoryRow
+        title="Documentaries"
+        movies={documentaries}
+        onSelect={handleSelect}
+      />
+    </div>
   );
 }
 
