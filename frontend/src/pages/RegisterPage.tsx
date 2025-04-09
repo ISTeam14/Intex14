@@ -12,7 +12,7 @@ function Register() {
   const [error, setError] = useState('');
 
   const handleLoginClick = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   // handle change events for input fields

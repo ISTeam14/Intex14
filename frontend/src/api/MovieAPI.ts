@@ -14,7 +14,9 @@ export const fetchMovie = async (
   show_id: string
 ): Promise<FetchMovieResponse> => {
   try {
-    const response = await fetch(`${API_URL}/GetMovie/${show_id}`);
+    const response = await fetch(`${API_URL}/GetMovie/${show_id}`, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movie.');
@@ -44,7 +46,10 @@ export const fetchMovies = async (): Promise<FetchMoviesResponse> => {
 
 export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
   const response = await fetch(
-    `https://localhost:5000/Movie/GetMoviesByGenre?genre=${genre}`
+    `https://localhost:5000/Movie/GetMoviesByGenre?genre=${genre}`,
+    {
+      credentials: 'include',
+    }
   );
   if (!response.ok) throw new Error('Failed to fetch movies.');
   const data = await response.json();

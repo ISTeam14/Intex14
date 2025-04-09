@@ -77,11 +77,15 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ show_id, rating }),
+      credentials: 'include',
     });
 
     // Refresh average
     const res = await fetch(
-      `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+      `https://localhost:5000/Movie/GetAverageRating/${show_id}`,
+      {
+        credentials: 'include',
+      }
     );
     const data = await res.json();
     setAverageRating(data.average);
@@ -116,7 +120,10 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     const fetchAverage = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+          `https://localhost:5000/Movie/GetAverageRating/${show_id}`,
+          {
+            credentials: 'include',
+          }
         );
         const data = await response.json();
         setAverageRating(data.average);

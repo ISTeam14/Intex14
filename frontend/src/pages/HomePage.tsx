@@ -4,6 +4,7 @@ import { Movie } from '../types/Movie';
 import Header from '../components/Header';
 import CategoryRow from '../components/CategoryRow';
 import { useNavigate } from 'react-router-dom';
+import AuthorizeView from '../components/AuthorizeView';
 
 function MoviesPage() {
   const navigate = useNavigate();
@@ -45,20 +46,26 @@ function MoviesPage() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}>
-      <Header />
-      <CategoryRow
-        title="Action"
-        movies={actionMovies}
-        onSelect={handleSelect}
-      />
-      <CategoryRow title="Comedies" movies={comedies} onSelect={handleSelect} />
-      <CategoryRow
-        title="Documentaries"
-        movies={documentaries}
-        onSelect={handleSelect}
-      />
-    </div>
+    <AuthorizeView>
+      <div style={{ paddingTop: '80px' }}>
+        <Header />
+        <CategoryRow
+          title="Action"
+          movies={actionMovies}
+          onSelect={handleSelect}
+        />
+        <CategoryRow
+          title="Comedies"
+          movies={comedies}
+          onSelect={handleSelect}
+        />
+        <CategoryRow
+          title="Documentaries"
+          movies={documentaries}
+          onSelect={handleSelect}
+        />
+      </div>
+    </AuthorizeView>
   );
 }
 

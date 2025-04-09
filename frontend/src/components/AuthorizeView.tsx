@@ -59,7 +59,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
     );
   }
 
-  return <Navigate to="/login" />;
+  return <Navigate to="/" />; // Redirect to login page if not authorized
 }
 
 export function AuthorizedUser(props: { value: string }) {
