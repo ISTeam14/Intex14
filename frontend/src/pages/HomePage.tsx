@@ -5,6 +5,7 @@ import CategoryRow from '../components/CategoryRow';
 import { useNavigate } from 'react-router-dom';
 import { fetchMoviesByGenrePaged } from '../api/MovieAPI';
 import AuthorizeView from '../components/AuthorizeView';
+import Footer from '../components/Footer';
 
 function MoviesPage() {
   return (
@@ -224,6 +225,8 @@ function AuthorizedMoviesContent() {
 
       {/* The sentinel element triggers the Intersection Observer */}
       <div ref={sentinelRef} />
+
+      <Footer />
     </div>
   );
 }
