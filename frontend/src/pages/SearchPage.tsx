@@ -5,7 +5,7 @@ function SearchPage() {
   return (
     <>
       <Header />
-      <div style={{ paddingTop: '80px' }}>
+      <div style={{ paddingTop: '100px' }}>
         <SearchBar />
       </div>
     </>
