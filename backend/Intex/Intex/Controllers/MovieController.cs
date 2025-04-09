@@ -1,4 +1,6 @@
-﻿using Intex.Data;
+﻿using System.Security.Claims;
+using Intex.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -265,25 +267,57 @@ namespace Intex.Controllers
             return Ok(existingMovie);
         }
 
-
-        //[HttpPost("SubmitRating")]
-        //public IActionResult SubmitRating([FromBody] movies_ratings newRating)
+        //[HttpGet("GetUserRating/{show_id}")]
+        //[Authorize] // Require authentication so we know who the user is
+        //public IActionResult GetUserRating(string show_id)
         //{
-        //    if (string.IsNullOrEmpty(newRating.show_id) || newRating.rating == null || string.IsNullOrEmpty(newRating.user_id))
+        //    // Retrieve the user id string from the authenticated user
+        //    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (string.IsNullOrEmpty(show_id) || string.IsNullOrEmpty(userIdString))
         //        return BadRequest("Missing data.");
 
+        //    // Convert user id string to integer
+        //    if (!int.TryParse(userIdString, out int parsedUserId))
+        //    {
+        //        return BadRequest("Invalid user id.");
+        //    }
+
+        //    // Query the database for the rating by the current user for this movie
+        //    var rating = _context.movies_ratings
+        //        .FirstOrDefault(r => r.show_id == show_id && r.user_id == parsedUserId)?.rating;
+
+        //    return Ok(new { rating });
+        //}
+
+
+        //[HttpPost("SubmitRating")]
+        //[Authorize] // Ensure that only authenticated users can rate
+        //public IActionResult SubmitRating([FromBody] movies_ratings newRating)
+        //{
+        //    // Retrieve the user id string from the authenticated user.
+        //    // (You may need to adjust the claim type if your token uses a different one, e.g. "sub".)
+        //    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    // Check for missing data
+        //    if (string.IsNullOrEmpty(newRating.show_id) || newRating.rating == null || string.IsNullOrEmpty(userIdString))
+        //        return BadRequest("Missing data.");
+
+        //    // Directly assign the string user id to the newRating object.
+        //    newRating.user_id = userIdString;
+
+        //    // Try to find an existing rating for this show_id by the current user.
         //    var existing = _context.movies_ratings
-        //        .FirstOrDefault(r => r.show_id == newRating.show_id && r.user_id == newRating.user_id);
+        //        .FirstOrDefault(r => r.show_id == newRating.show_id && r.user_id == userIdString);
 
         //    if (existing != null)
         //    {
-        //        // Update the existing rating
+        //        // Update the existing rating.
         //        existing.rating = newRating.rating;
         //        _context.movies_ratings.Update(existing);
         //    }
         //    else
         //    {
-        //        // Add new rating
+        //        // Add new rating.
         //        _context.movies_ratings.Add(newRating);
         //    }
 

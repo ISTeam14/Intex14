@@ -71,6 +71,28 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
   return data.movies;
 };
 
+export const getUserRating = async (
+  show_id: string
+): Promise<number | null> => {
+  try {
+    const response = await fetch(
+      `https://localhost:5000/Movie/GetUserRating/${show_id}`,
+      {
+        credentials: 'include', // ensures secure cookies are sent
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch user rating');
+    }
+    const data = await response.json();
+    // data.rating might be null if no rating exists
+    return data.rating;
+  } catch (error) {
+    console.error('Error in getUserRating:', error);
+    return null;
+  }
+};
+
 export const fetchRecommendedMovies = async (
   show_id: string
 ): Promise<Movie[]> => {
