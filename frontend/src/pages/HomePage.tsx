@@ -1,13 +1,13 @@
-// import MoviesList from '../components/MoviesList';
+import MoviesList from '../components/MoviesList';
 
-// function MoviesPage() {
-//   return (
-//     <>
-//       <div>
-//         <MoviesList />
-//       </div>
-//     </>
-//   );
-// }
+function MoviesPage() {
+  return (
+    <>
+      <div>
+        <MoviesList />
+      </div>
+    </>
+  );
+}
 
-// export default MoviesPage;
+export default MoviesPage;
