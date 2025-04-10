@@ -267,27 +267,27 @@ namespace Intex.Controllers
             return Ok(existingMovie);
         }
 
-        //[HttpGet("GetUserRating/{show_id}")]
-        //[Authorize] // Require authentication so we know who the user is
-        //public IActionResult GetUserRating(string show_id)
-        //{
-        //    // Retrieve the user id string from the authenticated user
-        //    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //    if (string.IsNullOrEmpty(show_id) || string.IsNullOrEmpty(userIdString))
-        //        return BadRequest("Missing data.");
+        [HttpGet("GetUserRating/{show_id}")]
+        [Authorize] // Require authentication so we know who the user is
+        public IActionResult GetUserRating(string show_id)
+        {
+            // Retrieve the user id string from the authenticated user
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(show_id) || string.IsNullOrEmpty(userIdString))
+                return BadRequest("Missing data.");
 
-        //    // Convert user id string to integer
-        //    if (!int.TryParse(userIdString, out int parsedUserId))
-        //    {
-        //        return BadRequest("Invalid user id.");
-        //    }
+            // Convert user id string to integer
+            if (!int.TryParse(userIdString, out int parsedUserId))
+            {
+                return BadRequest("Invalid user id.");
+            }
 
-        //    // Query the database for the rating by the current user for this movie
-        //    var rating = _context.movies_ratings
-        //        .FirstOrDefault(r => r.show_id == show_id && r.user_id == parsedUserId)?.rating;
+            // Query the database for the rating by the current user for this movie
+            var rating = _context.movies_ratings
+                .FirstOrDefault(r => r.show_id == show_id && r.user_id == parsedUserId)?.rating;
 
-        //    return Ok(new { rating });
-        //}
+            return Ok(new { rating });
+        }
 
 
         //[HttpPost("SubmitRating")]
