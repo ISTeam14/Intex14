@@ -46,7 +46,7 @@ function CategoryRow({ title, movies, onSelect }: CategoryRowProps) {
   };
 
   const sanitizeFilename = (title: string) =>
-    title.replace(/[\\/&-:"*?<>|]+/g, '').trim();
+    title.replace(/[\\\/&:.()'"*!?<>|\-]+/g, '').trim();
 
   const getPosterUrl = (title: string) =>
     `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
@@ -71,7 +71,7 @@ function CategoryRow({ title, movies, onSelect }: CategoryRowProps) {
               onClick={() => onSelect(m.show_id)}
             >
               <img
-                src={getPosterUrl(m.title)}
+                src={`https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(m.title))}.jpg`}
                 alt={`${m.title} poster`}
                 className="movie-poster"
                 onError={(e) => {

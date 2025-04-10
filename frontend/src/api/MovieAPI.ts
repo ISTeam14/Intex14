@@ -37,6 +37,20 @@ export const fetchMovie = async (
   }
 };
 
+export const fetchUserRecs = async (
+  user_id: number
+): Promise<Movie[]> => {
+  const response = await fetch(`${API_URL}/GetUserRecs/${user_id}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user recommendations.');
+  }
+
+  const data = await response.json();
+  return data.recommendations;
+};
+
+
 export const fetchMovies = async (
   show_id: string
 ): Promise<FetchMoviesResponse> => {
@@ -69,6 +83,28 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
   );
   const data = await res.json();
   return data.movies;
+};
+
+export const getUserRating = async (
+  show_id: string
+): Promise<number | null> => {
+  try {
+    const response = await fetch(
+      `https://localhost:5000/Movie/GetUserRating/${show_id}`,
+      {
+        credentials: 'include', // ensures secure cookies are sent
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch user rating');
+    }
+    const data = await response.json();
+    // data.rating might be null if no rating exists
+    return data.rating;
+  } catch (error) {
+    console.error('Error in getUserRating:', error);
+    return null;
+  }
 };
 
 export const fetchRecommendedMovies = async (

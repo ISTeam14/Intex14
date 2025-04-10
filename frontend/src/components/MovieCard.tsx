@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchMovie } from '../api/MovieAPI';
+import { fetchMovie, getUserRating } from '../api/MovieAPI';
 // import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieCard.css';
@@ -60,6 +60,15 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     return genre || null;
   };
 
+  useEffect(() => {
+    const loadUserRating = async () => {
+      const rating = await getUserRating(show_id);
+      setUserRating(rating);
+    };
+
+    loadUserRating();
+  }, [show_id]);
+
   const renderStars = (rating: number) => {
     return (
       <span>
@@ -73,18 +82,23 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const handleUserRate = async (rating: number) => {
     setUserRating(rating);
 
-    await fetch(`https://localhost:5000/Movie/SubmitRating`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ show_id, rating }),
-    });
+    try {
+      await fetch(`https://localhost:5000/Movie/SubmitRating`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Ensure cookies are sent
+        body: JSON.stringify({ show_id, rating }),
+      });
 
-    // Refresh average
-    const res = await fetch(
-      `https://localhost:5000/Movie/GetAverageRating/${show_id}`
-    );
-    const data = await res.json();
-    setAverageRating(data.average);
+      // Refresh the average rating after posting
+      const res = await fetch(
+        `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+      );
+      const data = await res.json();
+      setAverageRating(data.average);
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+    }
   };
 
   const formatGenre = (genre: string) =>
@@ -126,6 +140,10 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     };
 
     fetchAverage();
+  }, [show_id]);
+
+  useEffect(() => {
+    setUserRating(null);
   }, [show_id]);
 
   if (loading) return <p className="loading">Loading Movie...</p>;
