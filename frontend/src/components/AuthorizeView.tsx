@@ -41,10 +41,10 @@ export function AuthorizedUser(props: { value: string }) {
   return props.value === 'email' ? <>{user.email}</> : null;
 }
 export default AuthorizeView;
-function fetchWithRetry(
-  arg0: string,
-  arg1: { method: string; credentials: string },
-  arg2: Promise<void>
-) {
-  throw new Error('Function not implemented.');
-}
+// function fetchWithRetry(
+//   arg0: string,
+//   arg1: { method: string; credentials: string },
+//   arg2: Promise<void>
+// ) {
+//   throw new Error('Function not implemented.');
+// }
