@@ -5,9 +5,24 @@ import { fetchPages, deleteMovie } from '../api/MovieAPI';
 import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import AuthorizeView from '../components/AuthorizeView';
 import Header from '../components/Header';
+import RequireRole from '../components/RequireRole';
 
-const AdminPage = () => {
+function AdminPage() {
+  return (
+    <AuthorizeView>
+      <RequireRole role="Administrator">
+        <Header />
+        <div style={{ paddingTop: '80px' }}>
+          <AdminPageContent />
+        </div>
+      </RequireRole>
+    </AuthorizeView>
+  );
+}
+
+const AdminPageContent = () => {
   // const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -85,171 +100,171 @@ const AdminPage = () => {
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
-    <div style={{ paddingTop: '80px' }}>
-      <Header />
-      <div className="container mx-auto p-6 text-white">
-        <h1
-          className="text-3xl tracking-wide mb-6 text-center text-gray-200"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        >
-          Movie Manager
-        </h1>
-        {!showForm && (
-          <button className="pill-button add" onClick={() => setShowForm(true)}>
-            Add
-          </button>
-        )}
-        <br />
-        {showForm && (
-          <NewMovieForm
-            onSuccess={() => {
-              setShowForm(false);
-              fetchPages(pageSize, pageNum).then((data) =>
-                setMovies(data.movies)
-              );
-            }}
-            onCancel={() => setShowForm(false)}
-          />
-        )}
-        {editingMovie && (
-          <EditMovieForm
-            movie={editingMovie}
-            onSuccess={() => {
-              setEditingMovie(null);
-              fetchPages(pageSize, pageNum).then((data) =>
-                setMovies(data.movies)
-              );
-            }}
-            onCancel={() => setShowForm(false)}
-          />
-        )}
-        <br></br>
-        <table className="custom-table">
-          <thead>
-            <tr className="bg-gray-800 text-white">
-              {[
-                'ID',
-                'Type',
-                'Title',
-                'Genre',
-                'Rating',
-                'Director',
-                'Cast',
-                'Country',
-                'Release Year',
-                'Duration',
-                'Description',
-                'Actions',
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-4 py-2 border border-gray-600 text-left font-semibold"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {movies.map((s) => (
-              <tr key={s.show_id} className="border border-gray-600 align-top">
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.show_id}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.type}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.title}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {detectGenre(s)}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.rating}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.director}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  <div
-                    style={{
-                      maxHeight: '4.5em',
-                      overflowY: 'auto',
-                      whiteSpace: 'normal',
-                      lineHeight: '1.5em',
-                    }}
-                  >
-                    {s.cast}
-                  </div>
-                </td>
+    <div className="container mx-auto p-6 text-white">
+      <h1
+        className="text-3xl tracking-wide mb-6 text-center text-gray-200"
+        style={{ fontFamily: 'Inter, sans-serif' }}
+      >
+        Movie Manager
+      </h1>
 
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  <div
-                    style={{
-                      maxHeight: '4.5em',
-                      overflowY: 'auto',
-                      whiteSpace: 'normal',
-                      lineHeight: '1.5em',
-                    }}
-                  >
-                    {s.country}
-                  </div>
-                </td>
+      {!showForm && (
+        <button className="pill-button add" onClick={() => setShowForm(true)}>
+          Add
+        </button>
+      )}
 
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.release_year}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  {s.duration}
-                </td>
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  <div
-                    style={{
-                      maxHeight: '4.5em',
-                      overflowY: 'auto',
-                      whiteSpace: 'normal',
-                      lineHeight: '1.5em',
-                    }}
-                  >
-                    {s.description}
-                  </div>
-                </td>
+      <br />
 
-                <td className="px-4 py-2 border border-gray-600 align-top">
-                  <div className="button-stack">
-                    <button
-                      className="pill-button mr-2"
-                      onClick={() => setEditingMovie(s)}
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      className="pill-button"
-                      style={{ borderColor: '#f87171', color: '#f87171' }}
-                      onClick={() => handleDelete(s.show_id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <br /> <br></br>
-        <Pagination
-          currentPage={pageNum}
-          totalPages={totalPages}
-          pageSize={pageSize}
-          onPageChange={setPageNum}
-          onPageSizeChange={(newSize) => {
-            setPageSize(newSize);
-            setPageNum(1);
+      {showForm && (
+        <NewMovieForm
+          onSuccess={() => {
+            setShowForm(false);
+            fetchPages(pageSize, pageNum).then((data) =>
+              setMovies(data.movies)
+            );
           }}
+          onCancel={() => setShowForm(false)}
         />
-      </div>
+      )}
+
+      {editingMovie && (
+        <EditMovieForm
+          movie={editingMovie}
+          onSuccess={() => {
+            setEditingMovie(null);
+            fetchPages(pageSize, pageNum).then((data) =>
+              setMovies(data.movies)
+            );
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
+
+      <br />
+      <table className="custom-table">
+        <thead>
+          <tr className="bg-gray-800 text-white">
+            {[
+              'ID',
+              'Type',
+              'Title',
+              'Genre',
+              'Rating',
+              'Director',
+              'Cast',
+              'Country',
+              'Release Year',
+              'Duration',
+              'Description',
+              'Actions',
+            ].map((header) => (
+              <th
+                key={header}
+                className="px-4 py-2 border border-gray-600 text-left font-semibold"
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {movies.map((s) => (
+            <tr key={s.show_id} className="border border-gray-600 align-top">
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.show_id}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.type}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.title}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {detectGenre(s)}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.rating}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.director}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                <div
+                  style={{
+                    maxHeight: '4.5em',
+                    overflowY: 'auto',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.5em',
+                  }}
+                >
+                  {s.cast}
+                </div>
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                <div
+                  style={{
+                    maxHeight: '4.5em',
+                    overflowY: 'auto',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.5em',
+                  }}
+                >
+                  {s.country}
+                </div>
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.release_year}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                {s.duration}
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                <div
+                  style={{
+                    maxHeight: '4.5em',
+                    overflowY: 'auto',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.5em',
+                  }}
+                >
+                  {s.description}
+                </div>
+              </td>
+              <td className="px-4 py-2 border border-gray-600 align-top">
+                <div className="button-stack">
+                  <button
+                    className="pill-button mr-2"
+                    onClick={() => setEditingMovie(s)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="pill-button"
+                    style={{ borderColor: '#f87171', color: '#f87171' }}
+                    onClick={() => handleDelete(s.show_id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <br />
+      <br />
+      <Pagination
+        currentPage={pageNum}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setPageNum}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setPageNum(1);
+        }}
+      />
     </div>
   );
 };

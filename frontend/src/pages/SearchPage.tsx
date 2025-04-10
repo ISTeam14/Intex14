@@ -1,14 +1,17 @@
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
+import AuthorizeView from '../components/AuthorizeView';
 
 function SearchPage() {
   return (
-    <>
-      <Header />
-      <div style={{ paddingTop: '100px' }}>
-        <SearchBar />
-      </div>
-    </>
+    <AuthorizeView>
+      <>
+        <Header />
+        <div style={{ paddingTop: '80px' }}>
+          <SearchBar />
+        </div>
+      </>
+    </AuthorizeView>
   );
 }
 
