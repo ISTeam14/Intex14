@@ -16,6 +16,14 @@ function MoviesPage() {
 }
 
 function AuthorizedMoviesContent() {
+  return (
+    <AuthorizeView>
+      <AuthorizedMoviesContent />
+    </AuthorizeView>
+  );
+}
+
+function AuthorizedMoviesContent() {
   const navigate = useNavigate();
 
   const [moviesByGenre, setMoviesByGenre] = useState<Record<string, Movie[]>>(

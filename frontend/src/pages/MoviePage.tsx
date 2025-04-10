@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import MovieCard from '../components/MovieCard';
 import Header from '../components/Header';
+import AuthorizeView from '../components/AuthorizeView';
 
 function MoviePage() {
   const location = useLocation();
@@ -19,10 +20,12 @@ function MoviePage() {
   }, [location.state?.show_id]);
 
   return (
-    <div style={{ paddingTop: '80px' }}>
-      <Header />
-      <MovieCard show_id={selectedShowId} setShowId={setSelectedShowId} />
-    </div>
+    <AuthorizeView>
+      <div style={{ paddingTop: '80px' }}>
+        <Header />
+        <MovieCard show_id={selectedShowId} setShowId={setSelectedShowId} />
+      </div>
+    </AuthorizeView>
   );
 }
 

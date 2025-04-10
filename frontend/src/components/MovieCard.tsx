@@ -82,6 +82,7 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const handleUserRate = async (rating: number) => {
     setUserRating(rating);
 
+<<<<<<< HEAD
     try {
       await fetch(`https://localhost:5000/Movie/SubmitRating`, {
         method: 'POST',
@@ -99,6 +100,24 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     } catch (error) {
       console.error('Error submitting rating:', error);
     }
+=======
+    await fetch(`https://localhost:5000/Movie/SubmitRating`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ show_id, rating }),
+      credentials: 'include',
+    });
+
+    // Refresh average
+    const res = await fetch(
+      `https://localhost:5000/Movie/GetAverageRating/${show_id}`,
+      {
+        credentials: 'include',
+      }
+    );
+    const data = await res.json();
+    setAverageRating(data.average);
+>>>>>>> dawson6
   };
 
   const formatGenre = (genre: string) =>
@@ -130,7 +149,10 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     const fetchAverage = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+          `https://localhost:5000/Movie/GetAverageRating/${show_id}`,
+          {
+            credentials: 'include',
+          }
         );
         const data = await response.json();
         setAverageRating(data.average);

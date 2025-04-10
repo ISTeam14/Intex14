@@ -5,9 +5,25 @@ import { fetchPages, deleteMovie } from '../api/MovieAPI';
 import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import AuthorizeView from '../components/AuthorizeView';
+import Header from '../components/Header';
+import RequireRole from '../components/RequireRole';
 
-const AdminPage = () => {
-//   const navigate = useNavigate();
+function AdminPage() {
+  return (
+    <AuthorizeView>
+      <RequireRole role="Administrator">
+        <Header />
+        <div style={{ paddingTop: '80px' }}>
+          <AdminPageContent />
+        </div>
+      </RequireRole>
+    </AuthorizeView>
+  );
+}
+
+const AdminPageContent = () => {
+  //   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,12 +107,15 @@ const AdminPage = () => {
       >
         Movie Manager
       </h1>
+
       {!showForm && (
         <button className="pill-button add" onClick={() => setShowForm(true)}>
           Add
         </button>
       )}
+
       <br />
+
       {showForm && (
         <NewMovieForm
           onSuccess={() => {
@@ -108,6 +127,7 @@ const AdminPage = () => {
           onCancel={() => setShowForm(false)}
         />
       )}
+
       {editingMovie && (
         <EditMovieForm
           movie={editingMovie}
@@ -121,7 +141,6 @@ const AdminPage = () => {
         />
       )}
       <br></br>
-      
       <table className="custom-table">
         <thead>
           <tr className="bg-gray-800 text-white">
@@ -181,7 +200,6 @@ const AdminPage = () => {
                   {s.cast}
                 </div>
               </td>
-
               <td className="px-4 py-2 border border-gray-600 align-top">
                 <div
                   style={{
@@ -194,7 +212,6 @@ const AdminPage = () => {
                   {s.country}
                 </div>
               </td>
-
               <td className="px-4 py-2 border border-gray-600 align-top">
                 {s.release_year}
               </td>
@@ -213,7 +230,6 @@ const AdminPage = () => {
                   {s.description}
                 </div>
               </td>
-
               <td className="px-4 py-2 border border-gray-600 align-top">
                 <div className="button-stack">
                   <button
@@ -222,7 +238,6 @@ const AdminPage = () => {
                   >
                     Edit
                   </button>
-
                   <button
                     className="pill-button"
                     style={{ borderColor: '#f87171', color: '#f87171' }}
@@ -236,7 +251,9 @@ const AdminPage = () => {
           ))}
         </tbody>
       </table>
-      <br /> <br></br>
+
+      <br />
+      <br />
       <Pagination
         currentPage={pageNum}
         totalPages={totalPages}

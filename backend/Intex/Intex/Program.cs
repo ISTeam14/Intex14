@@ -2,14 +2,14 @@ using System.Security.Claims;
 using Intex.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Intex.Services;
+using RootkitAuth.API.Data;
+using RootkitAuth.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,13 +21,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+//builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    //.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+    options.Password.RequiredLength = 12;
+    options.Password.RequireDigit = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredUniqueChars = 0;
 });
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
@@ -37,7 +47,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.LoginPath = "/login";
+    options.LoginPath = "/";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
@@ -52,6 +62,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
         });
 });
+
+// Dummy email sender
+builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -97,7 +111,8 @@ app.MapGet("/pingauth", (ClaimsPrincipal user) =>
     }
 
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com"; // Ensure it's never null
-    return Results.Json(new { email = email }); // Return as JSON
+    var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+    return Results.Json(new { email, roles }); // Return as JSON
 }).RequireAuthorization();
 
 app.Run();

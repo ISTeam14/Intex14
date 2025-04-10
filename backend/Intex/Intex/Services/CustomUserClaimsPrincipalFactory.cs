@@ -1,20 +1,29 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-
-namespace Intex.Services;
-
-public class CustomUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<IdentityUser>
+namespace RootkitAuth.API.Services
 {
-    public CustomUserClaimsPrincipalFactory(
-        UserManager<IdentityUser> userManager, 
-        IOptions<IdentityOptions> optionsAccessor)
-        : base(userManager, optionsAccessor) { }
-
-    protected override async Task<ClaimsIdentity> GenerateClaimsAsync(IdentityUser user)
+    public class CustomUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<IdentityUser, IdentityRole>
     {
-        var identity = await base.GenerateClaimsAsync(user);
-        identity.AddClaim(new Claim(ClaimTypes.Email, user.Email ?? "")); // Ensure email claim is always present
-        return identity;
+        private readonly UserManager<IdentityUser> _userManager;
+        public CustomUserClaimsPrincipalFactory(
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IOptions<IdentityOptions> optionsAccessor)
+            : base(userManager, roleManager, optionsAccessor)
+        {
+            _userManager = userManager;
+        }
+        protected override async Task<ClaimsIdentity> GenerateClaimsAsync(IdentityUser user)
+        {
+            var identity = await base.GenerateClaimsAsync(user);
+            identity.AddClaim(new Claim(ClaimTypes.Email, user.Email ?? ""));
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+            return identity;
+        }
     }
 }
