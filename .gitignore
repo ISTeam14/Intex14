@@ -44,3 +44,5 @@ test-results/
 
 # Editor directories and files
 .vscode/*
+
+appsettings.json
