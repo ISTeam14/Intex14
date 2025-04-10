@@ -126,6 +126,22 @@ export const fetchRecommendedMovies = async (
   return data.recommendedMovies;
 };
 
+export const fetchHybridRecommendationsByEmail = async (
+  email: string
+): Promise<Movie[]> => {
+  const res = await fetch(
+    `${API_URL}/Movie/GetHybridRecommendationsByEmail?email=${encodeURIComponent(email)}`,
+    {
+      credentials: 'include',
+    }
+  );
+  if (!res.ok) {
+    throw new Error('Failed to fetch hybrid recommendations.');
+  }
+  const data = await res.json();
+  return data.recommendedMovies;
+};
+
 export const fetchMoviesByGenrePaged = async (
   genre: string,
   page: number,
