@@ -1,73 +1,46 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { Navigate } from 'react-router-dom';
-
-const UserContext = createContext<User | null>(null);
+import { pingAuth } from '../api/MovieAPI'; // Adjust the import path as necessary
 
 interface User {
   email: string;
+  roles: string[];
 }
+
+export const UserContext = createContext<User | null>(null);
 
 function AuthorizeView(props: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true); // add a loading state
-  //const navigate = useNavigate();
-  let emptyuser: User = { email: '' };
-
-  const [user, setUser] = useState(emptyuser);
+  const [user, setUser] = useState<User>({ email: '', roles: [] });
 
   useEffect(() => {
-    async function fetchWithRetry(url: string, options: any) {
-      try {
-        const response = await fetch(url, options);
-        //console.log('AuthorizeView: Raw Response:', response);
-
-        const contentType = response.headers.get('content-type');
-
-        // Ensure response is JSON before parsing
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Invalid response format from server');
-        }
-
-        const data = await response.json();
-
-        if (data.email) {
-          setUser({ email: data.email });
-          setAuthorized(true);
-        } else {
-          throw new Error('Invalid user session');
-        }
-      } catch (error) {
+    async function authorizeUser() {
+      const result = await pingAuth();
+      if (result.ok) {
+        setUser({ email: result.email, roles: result.roles });
+        setAuthorized(true);
+      } else {
         setAuthorized(false);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     }
-
-    fetchWithRetry('https://localhost:5000/pingauth', {
-      method: 'GET',
-      credentials: 'include',
-    });
+    authorizeUser();
   }, []);
-
   if (loading) {
     return <p>Loading...</p>;
   }
-
   if (authorized) {
     return (
       <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
     );
   }
-
-  return <Navigate to="/" />; // Redirect to login page if not authorized
+  return <Navigate to="/" />;
 }
-
+// Still works for any use of <AuthorizedUser value="email" />
 export function AuthorizedUser(props: { value: string }) {
   const user = React.useContext(UserContext);
-
-  if (!user) return null; // Prevents errors if context is null
-
+  if (!user) return null;
   return props.value === 'email' ? <>{user.email}</> : null;
 }
-
 export default AuthorizeView;

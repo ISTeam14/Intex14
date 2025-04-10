@@ -7,14 +7,17 @@ import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 import AuthorizeView from '../components/AuthorizeView';
 import Header from '../components/Header';
+import RequireRole from '../components/RequireRole';
 
 function AdminPage() {
   return (
     <AuthorizeView>
-      <Header />
-      <div style={{ paddingTop: '80px' }}>
-        <AdminPageContent />
-      </div>
+      <RequireRole role="Administrator">
+        <Header />
+        <div style={{ paddingTop: '80px' }}>
+          <AdminPageContent />
+        </div>
+      </RequireRole>
     </AuthorizeView>
   );
 }
