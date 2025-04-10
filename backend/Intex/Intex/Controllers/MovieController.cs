@@ -126,6 +126,7 @@ namespace Intex.Controllers
         }
 
         [HttpPost("AddMovie")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult AddMovie([FromBody] movies_titles newMovie)
         {
             try
@@ -160,6 +161,7 @@ namespace Intex.Controllers
         }
 
         [HttpDelete("DeleteMovie/{show_id}")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult DeleteMovie(string show_id)
         {
             var existingMovie = _context.movies_titles.Find(show_id);
@@ -174,6 +176,7 @@ namespace Intex.Controllers
         }
 
         [HttpPut("UpdateMovie/{show_id}")]
+        [Authorize(Roles = "Administrator")]
         public IActionResult UpdateMovie(string show_id, [FromBody] movies_titles updatedMovie)
         {
             var existingMovie = _context.movies_titles.Find(show_id);

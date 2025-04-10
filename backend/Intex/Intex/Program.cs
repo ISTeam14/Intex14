@@ -2,15 +2,14 @@ using System.Security.Claims;
 using Intex.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Intex.Services;
 using RootkitAuth.API.Data;
+using RootkitAuth.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -22,27 +21,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddAuthentication()
-    .AddGoogle(options =>
-    {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    });
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    //.AddEntityFrameworkStores<ApplicationDbContext>()
-    //.AddDefaultTokenProviders();
-
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    //.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Claims Settings
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
-    
-    // Password Settings
     options.Password.RequiredLength = 12;
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
@@ -51,6 +40,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 0;
 });
 
+// Google authentication setup
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    });
+
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -58,7 +55,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.LoginPath = "/login";
+    options.LoginPath = "/";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
@@ -74,6 +71,7 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Dummy email sender
 builder.Services.AddSingleton<IEmailSender<IdentityUser>, NoOpEmailSender<IdentityUser>>();
 
 var app = builder.Build();
@@ -110,21 +108,16 @@ app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> s
 }).RequireAuthorization();
 
 
-app.MapGet("/pingauth", (HttpContext context, ClaimsPrincipal user) =>
+app.MapGet("/pingauth", (ClaimsPrincipal user) =>
 {
-    Console.WriteLine($"User authenticated? {user.Identity?.IsAuthenticated}");
-    
     if (!user.Identity?.IsAuthenticated ?? false)
     {
-        Console.WriteLine("Unauthorized request to /pingauth");
         return Results.Unauthorized();
     }
 
-    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
-    Console.WriteLine($"Authenticated User Email: {email}");
-
-    return Results.Json(new { email = email });
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com"; // Ensure it's never null
+    var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+    return Results.Json(new { email, roles }); // Return as JSON
 }).RequireAuthorization();
-
 
 app.Run();
