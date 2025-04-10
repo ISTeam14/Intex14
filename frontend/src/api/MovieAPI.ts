@@ -18,7 +18,7 @@ interface FetchMoviesByGenrePagedResponse {
   total: number;
 }
 
-const API_URL = 'https://localhost:5000/Movie';
+const API_URL = 'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/Movie';
 
 export const fetchMovie = async (
   show_id: string
