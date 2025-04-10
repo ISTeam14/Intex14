@@ -72,6 +72,54 @@ namespace Intex.Controllers
             return Ok(new { recommendedMovies });
         }
 
+        [HttpGet("GetHybridRecommendationsByEmail")]
+        public async Task<IActionResult> GetHybridRecommendationsByEmail([FromQuery] string email)
+        {
+            // Step 1: Validate input
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(new { message = "Email is required." });
+            }
+
+            // Step 2: Look up the user_id using the email_ids table, similar to your SubmitRating route.
+            var emailMapping = await _context.email_ids
+                .FirstOrDefaultAsync(e => e.email == email);
+            if (emailMapping == null)
+            {
+                return NotFound(new { message = "User email not found." });
+            }
+
+            // Step 3: Query movies_ratings for the first watched movie (base show)
+            // Optionally, you can order by a timestamp field if you have one;
+            // here we use FirstOrDefaultAsync() as the “first” watched movie.
+            var firstRating = await _context.movies_ratings
+                .Where(r => r.user_id == emailMapping.user_id)
+                .FirstOrDefaultAsync();
+            if (firstRating == null)
+            {
+                return NotFound(new { message = "No movie ratings found for this user." });
+            }
+
+            // Use the show_id from the movies_ratings record as the base movie
+            var baseShowId = firstRating.show_id;
+
+            // Step 4: Query the hybrid_recs table for recommendations using the base show_id.
+            // Order by similarity_score descending and get the list of recommended show_ids.
+            var recommendedShowIds = await _context.hybrid_recs
+                .Where(r => r.base_show_id == baseShowId)
+                .OrderByDescending(r => r.similarity_score)
+                .Select(r => r.recommended_show_id)
+                .ToListAsync();
+
+            // Step 5: Use the list of recommended show_ids to query the movies_titles table.
+            var recommendedMovies = await _context.movies_titles
+                .Where(m => recommendedShowIds.Contains(m.show_id))
+                .ToListAsync();
+
+            // Return the recommended movies
+            return Ok(new { recommendedMovies });
+        }
+
         [HttpGet("GetMoviesByGenre")]
         public IActionResult GetMoviesByGenre([FromQuery] string genre)
         {
