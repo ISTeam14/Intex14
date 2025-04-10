@@ -7,7 +7,7 @@ namespace Intex.Data
     public class movies_ratings
     {
         [Required]
-        public string user_id { get; set; }
+        public int user_id { get; set; }
 
         [Required]
         public string show_id { get; set; }

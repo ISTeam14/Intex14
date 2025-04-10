@@ -19,6 +19,8 @@ namespace Intex.Data
 
         public DbSet<wide_deep_recs> wide_deep_recs { get; set; }
 
+        public DbSet<email_ids> email_ids { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

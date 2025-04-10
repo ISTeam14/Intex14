@@ -4,7 +4,6 @@ import './LoginPage.css';
 // import Header from '../components/Header';
 
 function LoginPage() {
-  // state variables for email and passwords
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [rememberme, setRememberme] = useState<boolean>(false);
@@ -14,7 +13,6 @@ function LoginPage() {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-  // handle change events for input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
     if (type === 'checkbox') {
@@ -30,10 +28,9 @@ function LoginPage() {
     navigate('/register');
   };
 
-  // handle submit event for the form
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(''); // Clear any previous errors
+    setError('');
 
     if (!email || !password) {
       setError('Please fill in all fields.');
@@ -46,12 +43,11 @@ function LoginPage() {
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
-        credentials: 'include', // ✅ Ensures cookies are sent & received
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      // Ensure we only parse JSON if there is content
       let data = null;
       const contentLength = response.headers.get('content-length');
       if (contentLength && parseInt(contentLength, 10) > 0) {
@@ -68,6 +64,10 @@ function LoginPage() {
       console.error('Fetch attempt failed:', error);
     }
   };
+
+  // const handleGoogleLogin = () => {
+  //   window.location.href = 'https://localhost:5000/signin-google';
+  // };
 
   return (
     <div>

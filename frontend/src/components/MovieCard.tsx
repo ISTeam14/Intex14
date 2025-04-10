@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { fetchMovie, getUserRating } from '../api/MovieAPI';
-// import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import './MovieCard.css';
 import MovieMiniCards from './MovieMiniCards';
+import { UserContext } from '../components/AuthorizeView';
 
 interface MovieCardProps {
   show_id: string;
@@ -12,7 +12,6 @@ interface MovieCardProps {
 
 function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const [movie, setMovie] = useState<Movie | null>(null);
-  //   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'suggested' | 'details'>(
@@ -20,6 +19,12 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
   );
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [userRating, setUserRating] = useState<number | null>(null);
+
+  const API_URL =
+    'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net';
+
+  // Move useContext here, at the top level:
+  const user = useContext(UserContext);
 
   const getGenre = (movie: any): string | null => {
     const possibleGenres = [
@@ -80,20 +85,23 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
   };
 
   const handleUserRate = async (rating: number) => {
+    if (!user || !user.email) {
+      console.error('User email not available');
+      return;
+    }
+
     setUserRating(rating);
 
     try {
-      await fetch(`https://localhost:5000/Movie/SubmitRating`, {
+      await fetch(`${API_URL}/Movie/SubmitRating`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Ensure cookies are sent
-        body: JSON.stringify({ show_id, rating }),
+        body: JSON.stringify({ show_id, rating, email: user.email }),
       });
 
       // Refresh the average rating after posting
-      const res = await fetch(
-        `https://localhost:5000/Movie/GetAverageRating/${show_id}`
-      );
+      const res = await fetch(`${API_URL}/Movie/GetAverageRating/${show_id}`);
       const data = await res.json();
       setAverageRating(data.average);
     } catch (error) {
@@ -130,7 +138,10 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
     const fetchAverage = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5000/Movie/GetAverageRating/${show_id}`
+          `${API_URL}/Movie/GetAverageRating/${show_id}`,
+          {
+            credentials: 'include',
+          }
         );
         const data = await response.json();
         setAverageRating(data.average);
@@ -239,10 +250,6 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
                   <p>
                     <strong>Cast:</strong>
                   </p>
-                  {(() => {
-                    console.log('Cast string:', movie.cast);
-                    return null;
-                  })()}
                   <ul className="cast-list">
                     {movie.cast ? (
                       movie.cast

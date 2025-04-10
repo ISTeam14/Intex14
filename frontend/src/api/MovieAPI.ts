@@ -18,13 +18,16 @@ interface FetchMoviesByGenrePagedResponse {
   total: number;
 }
 
-const API_URL = 'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/Movie';
+const API_URL =
+  'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net';
 
 export const fetchMovie = async (
   show_id: string
 ): Promise<FetchMovieResponse> => {
   try {
-    const response = await fetch(`${API_URL}/GetMovie/${show_id}`);
+    const response = await fetch(`${API_URL}/Movie/GetMovie/${show_id}`, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movie.');
@@ -37,9 +40,7 @@ export const fetchMovie = async (
   }
 };
 
-export const fetchUserRecs = async (
-  user_id: number
-): Promise<Movie[]> => {
+export const fetchUserRecs = async (user_id: number): Promise<Movie[]> => {
   const response = await fetch(`${API_URL}/GetUserRecs/${user_id}`);
 
   if (!response.ok) {
@@ -50,12 +51,13 @@ export const fetchUserRecs = async (
   return data.recommendations;
 };
 
-
 export const fetchMovies = async (
   show_id: string
 ): Promise<FetchMoviesResponse> => {
   try {
-    const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
+    const response = await fetch(`${API_URL}/Movie/GetMovies/${show_id}`, {
+      credentials: 'include',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch movie.');
@@ -70,7 +72,10 @@ export const fetchMovies = async (
 
 export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
   const response = await fetch(
-    `https://localhost:5000/Movie/GetMoviesByGenre?genre=${genre}`
+    `${API_URL}/Movie/GetMoviesByGenre?genre=${genre}`,
+    {
+      credentials: 'include',
+    }
   );
   if (!response.ok) throw new Error('Failed to fetch movies.');
   const data = await response.json();
@@ -79,7 +84,10 @@ export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
 
 export const searchMovies = async (query: string): Promise<Movie[]> => {
   const res = await fetch(
-    `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`
+    `${API_URL}/Movie/SearchMovies?query=${encodeURIComponent(query)}`,
+    {
+      credentials: 'include',
+    }
   );
   const data = await res.json();
   return data.movies;
@@ -89,18 +97,14 @@ export const getUserRating = async (
   show_id: string
 ): Promise<number | null> => {
   try {
-    const response = await fetch(
-      `https://localhost:5000/Movie/GetUserRating/${show_id}`,
-      {
-        credentials: 'include', // ensures secure cookies are sent
-      }
-    );
+    const response = await fetch(`${API_URL}/Movie/GetUserRating/${show_id}`, {
+      credentials: 'include', // ensures authentication cookies are sent
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch user rating');
     }
     const data = await response.json();
-    // data.rating might be null if no rating exists
-    return data.rating;
+    return data.rating; // will be either a number or null
   } catch (error) {
     console.error('Error in getUserRating:', error);
     return null;
@@ -110,7 +114,9 @@ export const getUserRating = async (
 export const fetchRecommendedMovies = async (
   show_id: string
 ): Promise<Movie[]> => {
-  const response = await fetch(`${API_URL}/GetMovies/${show_id}`);
+  const response = await fetch(`${API_URL}/Movie/GetMovies/${show_id}`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch recommended movies.');
@@ -127,7 +133,8 @@ export const fetchMoviesByGenrePaged = async (
 ): Promise<FetchMoviesByGenrePagedResponse> => {
   try {
     const response = await fetch(
-      `${API_URL}/GetMoviesByGenrePaged?genre=${genre}&page=${page}&pageSize=${pageSize}`
+      `${API_URL}/Movie/GetMoviesByGenrePaged?genre=${genre}&page=${page}&pageSize=${pageSize}`,
+      { credentials: 'include' }
     );
 
     if (!response.ok) {
@@ -151,7 +158,10 @@ export const fetchPages = async (
 ): Promise<FetchPagesResponse> => {
   try {
     const response = await fetch(
-      `${API_URL}/GetMoviePages?pageHowMany=${pageSize}&pageNum=${pageNum}`
+      `${API_URL}/Movie/GetMoviePages?pageHowMany=${pageSize}&pageNum=${pageNum}`,
+      {
+        credentials: 'include',
+      }
     );
 
     if (!response.ok) {
@@ -168,8 +178,9 @@ export const fetchPages = async (
 export const deleteMovie = async (show_id: string): Promise<void> => {
   // Changed type to string
   try {
-    const response = await fetch(`${API_URL}/DeleteMovie/${show_id}`, {
+    const response = await fetch(`${API_URL}/Movie/DeleteMovie/${show_id}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -186,10 +197,11 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
     // Log the payload you're about to send
     console.log(' Sending movie to backend:', newMovie);
 
-    const response = await fetch(`${API_URL}/AddMovie`, {
+    const response = await fetch(`${API_URL}/Movie/AddMovie`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
       },
       body: JSON.stringify(newMovie),
     });
@@ -210,10 +222,11 @@ export const updateMovie = async (
   updatedMovie: Movie
 ): Promise<Movie> => {
   try {
-    const response = await fetch(`${API_URL}/UpdateMovie/${show_id}`, {
+    const response = await fetch(`${API_URL}/Movie/UpdateMovie/${show_id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
       },
       body: JSON.stringify(updatedMovie),
     });
@@ -224,3 +237,28 @@ export const updateMovie = async (
     throw error;
   }
 };
+
+export async function pingAuth() {
+  try {
+    const response = await fetch(
+      'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/pingauth',
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format from server');
+    }
+    const data = await response.json();
+    if (data.email) {
+      return { ok: true, email: data.email, roles: data.roles ?? [] };
+    } else {
+      throw new Error('Invalid user session');
+    }
+  } catch (error) {
+    console.error('Authorization error:', error);
+    return { ok: false };
+  }
+}
