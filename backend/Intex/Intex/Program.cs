@@ -56,6 +56,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
+
             policy.WithOrigins("http://localhost:3000", "https://nice-island-09af85a1e.6.azurestaticapps.net")
             .AllowCredentials()
             .AllowAnyHeader()
