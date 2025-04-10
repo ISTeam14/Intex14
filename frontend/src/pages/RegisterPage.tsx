@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
-import Header from '../components/Header';
+// import Header from '../components/Header';
 
 function Register() {
   // state variables for email and passwords

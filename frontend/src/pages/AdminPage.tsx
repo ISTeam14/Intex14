@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Movie } from '../types/Movie';
 import { fetchPages, deleteMovie } from '../api/MovieAPI';
 import Pagination from '../components/Pagination';
@@ -7,7 +7,7 @@ import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 
 const AdminPage = () => {
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
