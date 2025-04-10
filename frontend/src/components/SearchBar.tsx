@@ -30,7 +30,7 @@ function SearchBar() {
         url += `&genres=${selectedGenres.join(',')}`;
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: 'include' });
       if (!res.ok) throw new Error('Bad response from search API');
 
       const data = await res.json();
