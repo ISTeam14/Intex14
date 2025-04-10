@@ -385,6 +385,31 @@ namespace Intex.Controllers
             return Ok(new { message = "Rating submitted successfully" });
         }
 
+        [HttpGet("GetUserRecsByEmail")]
+        public async Task<IActionResult> GetUserRecsByEmail([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Email is required.");
+
+            // Step 1: Look up user_id from email
+            var user = await _context.email_ids.FirstOrDefaultAsync(e => e.email == email);
+            if (user == null)
+                return NotFound("User not found.");
+
+            // Step 2: Query full movie metadata using the navigation property
+            var recs = _context.wide_deep_recs
+                .Where(r => r.UserId == user.user_id)
+                .OrderByDescending(r => r.PredictedRating)
+                .Take(75)
+                .Select(r => r.Show) // This gives you movies_titles via FK navigation
+                .Where(m => m != null) // prevent nulls if joins failed
+                .ToList();
+
+            return Ok(new { recommendations = recs });
+        }
+
+
+
 
 
     }
