@@ -48,8 +48,8 @@ function CategoryRow({ title, movies, onSelect }: CategoryRowProps) {
   const sanitizeFilename = (title: string) =>
     title.replace(/[\\\/&:.()'"*!?<>|\-]+/g, '').trim();
 
-  const getPosterUrl = (title: string) =>
-    `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
+  // const getPosterUrl = (title: string) =>
+  //   `https://large-assignments.s3.us-east-1.amazonaws.com/movie-images/${encodeURIComponent(sanitizeFilename(title))}.jpg`;
 
   return (
     <div className="category-row">
