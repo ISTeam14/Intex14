@@ -61,6 +61,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseDeveloperExceptionPage();
+
+
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
