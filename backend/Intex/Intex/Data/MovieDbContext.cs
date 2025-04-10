@@ -17,6 +17,26 @@ namespace Intex.Data
 
         public DbSet<hybrid_recs> hybrid_recs { get; set; }
 
+        public DbSet<wide_deep_recs> wide_deep_recs { get; set; }
+
         public DbSet<email_ids> email_ids { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<wide_deep_recs>()
+                .HasNoKey()  // 👈 Tells EF Core this is a read-only, no-primary-key table
+                .ToTable("wide_deep_recs");
+
+            modelBuilder.Entity<wide_deep_recs>()
+                .HasOne(w => w.Show)
+                .WithMany()
+                .HasForeignKey(w => w.ShowId)
+                .HasPrincipalKey(m => m.show_id);
+        }
     }
 }
+
+
+
+    

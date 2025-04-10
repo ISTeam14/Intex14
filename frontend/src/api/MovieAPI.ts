@@ -18,7 +18,8 @@ interface FetchMoviesByGenrePagedResponse {
   total: number;
 }
 
-const API_URL = 'https://localhost:5000';
+const API_URL =
+  'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net';
 
 export const fetchMovie = async (
   show_id: string
@@ -37,6 +38,17 @@ export const fetchMovie = async (
     console.error('Error fetching movie: ', error);
     throw error;
   }
+};
+
+export const fetchUserRecs = async (user_id: number): Promise<Movie[]> => {
+  const response = await fetch(`${API_URL}/GetUserRecs/${user_id}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user recommendations.');
+  }
+
+  const data = await response.json();
+  return data.recommendations;
 };
 
 export const fetchMovies = async (
@@ -86,14 +98,13 @@ export const getUserRating = async (
 ): Promise<number | null> => {
   try {
     const response = await fetch(`${API_URL}/Movie/GetUserRating/${show_id}`, {
-      credentials: 'include', // ensures secure cookies are sent
+      credentials: 'include', // ensures authentication cookies are sent
     });
     if (!response.ok) {
       throw new Error('Failed to fetch user rating');
     }
     const data = await response.json();
-    // data.rating might be null if no rating exists
-    return data.rating;
+    return data.rating; // will be either a number or null
   } catch (error) {
     console.error('Error in getUserRating:', error);
     return null;
@@ -229,10 +240,13 @@ export const updateMovie = async (
 
 export async function pingAuth() {
   try {
-    const response = await fetch(`${API_URL}/pingauth`, {
-      method: 'GET',
-      credentials: 'include',
-    });
+    const response = await fetch(
+      'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/pingauth',
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       throw new Error('Invalid response format from server');

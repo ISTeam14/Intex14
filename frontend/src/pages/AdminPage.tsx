@@ -140,8 +140,8 @@ const AdminPageContent = () => {
           onCancel={() => setShowForm(false)}
         />
       )}
+      <br></br>
 
-      <br />
       <table className="custom-table">
         <thead>
           <tr className="bg-gray-800 text-white">

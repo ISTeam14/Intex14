@@ -37,9 +37,8 @@ function LoginPage() {
       return;
     }
 
-    const loginUrl = rememberme
-      ? 'https://localhost:5000/login?useCookies=true'
-      : 'https://localhost:5000/login?useSessionCookies=true';
+    const loginUrl = 'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/login?useCookies=true';
+
 
     try {
       const response = await fetch(loginUrl, {

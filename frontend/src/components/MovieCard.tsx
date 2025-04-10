@@ -20,7 +20,8 @@ function MovieCard({ show_id, setShowId }: MovieCardProps) {
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [userRating, setUserRating] = useState<number | null>(null);
 
-  const API_URL = 'https://localhost:5000';
+  const API_URL =
+    'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net';
 
   // Move useContext here, at the top level:
   const user = useContext(UserContext);

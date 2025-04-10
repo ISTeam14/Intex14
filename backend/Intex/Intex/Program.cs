@@ -26,7 +26,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 //builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    //.AddEntityFrameworkStores<ApplicationDbContext>();
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -56,7 +56,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000")
+            policy.WithOrigins("http://localhost:3000", "https://happy-ocean-0226af81e.6.azurestaticapps.net")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -75,8 +75,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowFrontend");
+app.UseDeveloperExceptionPage();
+
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+
 
 app.UseAuthentication();
 app.UseAuthorization();
