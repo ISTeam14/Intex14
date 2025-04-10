@@ -60,7 +60,7 @@ export const fetchMovies = async (
 
 export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
   const response = await fetch(
-    `https://localhost:5000/Movie/GetMoviesByGenre?genre=${genre}`,
+    `${API_URL}/Movie/GetMoviesByGenre?genre=${genre}`,
     {
       credentials: 'include',
     }
@@ -72,7 +72,7 @@ export const fetchMoviesByGenre = async (genre: string): Promise<Movie[]> => {
 
 export const searchMovies = async (query: string): Promise<Movie[]> => {
   const res = await fetch(
-    `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`,
+    `${API_URL}/Movie/SearchMovies?query=${encodeURIComponent(query)}`,
     {
       credentials: 'include',
     }
@@ -85,12 +85,9 @@ export const getUserRating = async (
   show_id: string
 ): Promise<number | null> => {
   try {
-    const response = await fetch(
-      `https://localhost:5000/Movie/GetUserRating/${show_id}`,
-      {
-        credentials: 'include', // ensures secure cookies are sent
-      }
-    );
+    const response = await fetch(`${API_URL}/Movie/GetUserRating/${show_id}`, {
+      credentials: 'include', // ensures secure cookies are sent
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch user rating');
     }

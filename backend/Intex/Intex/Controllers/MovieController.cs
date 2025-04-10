@@ -3,6 +3,8 @@ using Intex.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace Intex.Controllers
 {
@@ -272,62 +274,102 @@ namespace Intex.Controllers
         }
 
         [HttpGet("GetUserRating/{show_id}")]
-        [Authorize] // Require authentication so we know who the user is
-        public IActionResult GetUserRating(string show_id)
+        [Authorize]   // Ensure only authenticated users may call this endpoint.
+        public async Task<IActionResult> GetUserRating(string show_id)
         {
-            // Retrieve the user id string from the authenticated user
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(show_id) || string.IsNullOrEmpty(userIdString))
-                return BadRequest("Missing data.");
-
-            // Convert user id string to integer
-            if (!int.TryParse(userIdString, out int parsedUserId))
+            // Get the email from the current user's claims.
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
             {
-                return BadRequest("Invalid user id.");
+                return Unauthorized("No user email found in the claims.");
             }
 
-            // Query the database for the rating by the current user for this movie
-            var rating = _context.movies_ratings
-                .FirstOrDefault(r => r.show_id == show_id && r.user_id == parsedUserId)?.rating;
+            // Look up the user's mapping in the email_ids table.
+            var emailMapping = await _context.email_ids
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.email == email);
 
-            return Ok(new { rating });
+            if (emailMapping == null)
+            {
+                return BadRequest("User email mapping not found.");
+            }
+
+            // Find the existing rating by this user for the given show.
+            var rating = await _context.movies_ratings
+                .AsNoTracking()
+                .Where(r => r.user_id == emailMapping.user_id && r.show_id == show_id)
+                .Select(r => r.rating)
+                .FirstOrDefaultAsync();
+
+            // If no rating exists, rating will be 0 (default for an int) so it might be
+            // better to return null explicitly. One way is to check if a rating record exists:
+            bool ratingExists = await _context.movies_ratings
+                .AsNoTracking()
+                .AnyAsync(r => r.user_id == emailMapping.user_id && r.show_id == show_id);
+
+            return Ok(new { rating = ratingExists ? rating : (int?)null });
+        }
+
+        [HttpPost("SubmitRating")]
+        public async Task<IActionResult> SubmitRating([FromBody] RatingSubmitRequest request)
+        {
+            if (request == null)
+                return BadRequest("Invalid request.");
+
+            // Try to get the email mapping from the database.
+            var emailMapping = await _context.email_ids
+                .FirstOrDefaultAsync(e => e.email == request.email);
+
+            // If the mapping doesn't exist, add a new record.
+            if (emailMapping == null)
+            {
+                var newEmailMapping = new email_ids
+                {
+                    email = request.email
+                };
+
+                _context.email_ids.Add(newEmailMapping);
+                await _context.SaveChangesAsync(); // Save to generate a new user_id
+
+                // Use the newly created mapping for further processing.
+                emailMapping = newEmailMapping;
+                Console.WriteLine("Created new email mapping for: " + request.email + " with user id: " + emailMapping.user_id);
+            }
+            else
+            {
+                Console.WriteLine("Found user id: " + emailMapping.user_id);
+            }
+
+            // Check if there is an existing rating for the same user and movie.
+            var existingRating = await _context.movies_ratings
+                .FirstOrDefaultAsync(r => r.user_id == emailMapping.user_id && r.show_id == request.show_id);
+
+            if (existingRating != null)
+            {
+                // Update the existing rating.
+                existingRating.rating = request.rating;
+                _context.movies_ratings.Update(existingRating);
+                Console.WriteLine($"Updated rating for user {emailMapping.user_id} on movie {request.show_id}.");
+            }
+            else
+            {
+                // Create a new movie rating.
+                var movieRating = new movies_ratings
+                {
+                    user_id = emailMapping.user_id,
+                    show_id = request.show_id,
+                    rating = request.rating
+                };
+                _context.movies_ratings.Add(movieRating);
+                Console.WriteLine($"Added new rating for user {emailMapping.user_id} on movie {request.show_id}.");
+            }
+
+            _context.SaveChanges();
+
+            return Ok(new { message = "Rating submitted successfully" });
         }
 
 
-        //[HttpPost("SubmitRating")]
-        //[Authorize] // Ensure that only authenticated users can rate
-        //public IActionResult SubmitRating([FromBody] movies_ratings newRating)
-        //{
-        //    // Retrieve the user id string from the authenticated user.
-        //    // (You may need to adjust the claim type if your token uses a different one, e.g. "sub".)
-        //    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        //    // Check for missing data
-        //    if (string.IsNullOrEmpty(newRating.show_id) || newRating.rating == null || string.IsNullOrEmpty(userIdString))
-        //        return BadRequest("Missing data.");
-
-        //    // Directly assign the string user id to the newRating object.
-        //    newRating.user_id = userIdString;
-
-        //    // Try to find an existing rating for this show_id by the current user.
-        //    var existing = _context.movies_ratings
-        //        .FirstOrDefault(r => r.show_id == newRating.show_id && r.user_id == userIdString);
-
-        //    if (existing != null)
-        //    {
-        //        // Update the existing rating.
-        //        existing.rating = newRating.rating;
-        //        _context.movies_ratings.Update(existing);
-        //    }
-        //    else
-        //    {
-        //        // Add new rating.
-        //        _context.movies_ratings.Add(newRating);
-        //    }
-
-        //    _context.SaveChanges();
-        //    return Ok();
-        //}
 
     }
 }
