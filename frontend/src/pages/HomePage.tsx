@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { fetchMoviesByGenrePaged } from '../api/MovieAPI';
 import AuthorizeView from '../components/AuthorizeView';
 import Footer from '../components/Footer';
+import UserRecsRow from '../components/UserRecsRow';
+
 
 function MoviesPage() {
   return (
@@ -204,6 +206,8 @@ function AuthorizedMoviesContent() {
   return (
     <div style={{ paddingTop: '80px', minHeight: '100vh' }}>
       <Header />
+      
+      <UserRecsRow onSelect={handleSelect} />
 
       {loadedGenres.map((genre) => (
         <CategoryRow

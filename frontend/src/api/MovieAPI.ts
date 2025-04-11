@@ -238,6 +238,20 @@ export const updateMovie = async (
   }
 };
 
+export const fetchUserRecsByEmail = async (email: string): Promise<Movie[]> => {
+  const res = await fetch(`${API_URL}/Movie/GetUserRecsByEmail?email=${encodeURIComponent(email)}`, {
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch user recommendations by email.');
+  }
+
+  const data = await res.json();
+  return data.recommendations;
+};
+
+
 export async function pingAuth() {
   try {
     const response = await fetch(
