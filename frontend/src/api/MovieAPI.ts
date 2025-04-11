@@ -176,13 +176,11 @@ export const fetchPages = async (
 };
 
 export const deleteMovie = async (show_id: string): Promise<void> => {
-  // Changed type to string
   try {
     const response = await fetch(`${API_URL}/Movie/DeleteMovie/${show_id}`, {
       method: 'DELETE',
       credentials: 'include',
     });
-
     if (!response.ok) {
       throw new Error('Failed to delete movie');
     }
@@ -191,32 +189,26 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
     throw error;
   }
 };
-
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
-    // Log the payload you're about to send
-    console.log(' Sending movie to backend:', newMovie);
-
+    console.log('Sending movie to backend:', newMovie);
     const response = await fetch(`${API_URL}/Movie/AddMovie`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        credentials: 'include',
+        'Content-Type': 'application/json'
       },
+      credentials: 'include', // Credentials now at the top level.
       body: JSON.stringify(newMovie),
     });
-
     if (!response.ok) {
       throw new Error('Failed to add Movie');
     }
-
     return await response.json();
   } catch (error) {
-    console.error(' Error adding movie:', error);
+    console.error('Error adding movie:', error);
     throw error;
   }
 };
-
 export const updateMovie = async (
   show_id: string,
   updatedMovie: Movie
@@ -225,19 +217,17 @@ export const updateMovie = async (
     const response = await fetch(`${API_URL}/Movie/UpdateMovie/${show_id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        credentials: 'include',
+        'Content-Type': 'application/json'
       },
+      credentials: 'include', // Credentials correctly placed here.
       body: JSON.stringify(updatedMovie),
     });
-
     return await response.json();
   } catch (error) {
-    console.error('Error updating project:', error);
+    console.error('Error updating movie:', error);
     throw error;
   }
 };
-
 export async function pingAuth() {
   try {
     const response = await fetch(
