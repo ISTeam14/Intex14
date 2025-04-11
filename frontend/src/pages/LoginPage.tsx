@@ -5,8 +5,8 @@ import './LoginPage.css';
 function LoginPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [rememberme, setRememberme] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [, setRememberme] = useState<boolean>(false);
+  const [showPassword] = useState(false);
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
