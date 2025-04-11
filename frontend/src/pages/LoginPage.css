@@ -1,21 +1,14 @@
 /* LoginPage.css */
 
-body {
-  background-color: #0e0e10;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center; /* ✅ vertically center */
-  height: 100vh; /* ✅ fill full screen height */
+  align-items: center;
+  height: 100vh;
   padding: 0 1rem;
   box-sizing: border-box;
-  background-color: #0e0e10;
 }
+
 
 .card {
   width: 100%;

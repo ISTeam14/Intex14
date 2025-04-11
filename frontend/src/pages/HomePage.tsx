@@ -13,6 +13,7 @@ import Footer from '../components/Footer';
 import UserRecsRow from '../components/UserRecsRow';
 
 
+
 function MoviesPage() {
   return (
     <AuthorizeView>
