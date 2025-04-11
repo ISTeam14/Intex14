@@ -9,7 +9,6 @@
   box-sizing: border-box;
 }
 
-
 .card {
   width: 100%;
   max-width: 400px;
@@ -58,7 +57,7 @@
 
 label {
   display: block;
-  text-align: left; /* ✅ left-aligns the label */
+  /* text-align: left; ✅ left-aligns the label */
   margin-bottom: 0.4rem;
   font-size: 0.95rem;
   color: #ccc;
