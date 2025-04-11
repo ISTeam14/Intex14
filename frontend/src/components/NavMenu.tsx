@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import './NavMenu.css';
 import Logout from './Logout';
-import { AuthorizedUser } from './AuthorizeView';
 
 function NavMenu() {
   return (
@@ -24,7 +23,7 @@ function NavMenu() {
         </li>
         <li>
           <Logout>
-            Logout <AuthorizedUser value="email" />
+            Logout
           </Logout>
         </li>
       </ul>

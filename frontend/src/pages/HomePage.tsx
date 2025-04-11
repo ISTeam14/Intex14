@@ -7,6 +7,7 @@ import { fetchMoviesByGenrePaged } from '../api/MovieAPI';
 import AuthorizeView from '../components/AuthorizeView';
 import Footer from '../components/Footer';
 
+
 function MoviesPage() {
   return (
     <AuthorizeView>

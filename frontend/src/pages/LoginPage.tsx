@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
-// import Header from '../components/Header';
 
 function LoginPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [rememberme, setRememberme] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // state variable for error messages
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
+
+  // ✅ Add/remove login-background class to <body>
+  useEffect(() => {
+    document.body.classList.add('login-background');
+    return () => document.body.classList.remove('login-background');
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
@@ -39,7 +42,6 @@ function LoginPage() {
 
     const loginUrl = 'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/login?useCookies=true';
 
-
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
@@ -65,109 +67,99 @@ function LoginPage() {
     }
   };
 
-  // const handleGoogleLogin = () => {
-  //   window.location.href = 'https://localhost:5000/signin-google';
-  // };
-
   return (
-    <div>
-      <div className="login-container">
-        <div className="row">
-          <div className="card border-0 shadow rounded-3 ">
-            <div className="card-body p-4 p-sm-5">
-              <h5 className="card-title text-center mb-5 fw-light fs-5">
-                Sign In
-              </h5>
+    <div className="login-container">
+      <div className="row">
+        <div className="card border-0 shadow rounded-3">
+          <div className="card-body p-4 p-sm-5">
+            <h5 className="card-title text-center mb-5 fw-light fs-5">
+              Sign In
+            </h5>
+            <br />
+            <form onSubmit={handleSubmit}>
+              <div className="form-floating mb-3">
+                <label htmlFor="email">Email address</label>
+                <input
+                  className="form-control"
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-floating mb-3">
+                <label htmlFor="password">Password</label>
+                <input
+                  className="form-control"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                />
+                <div className="password-toggle">
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="show-password"
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-check mb-3">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="rememberme"
+                  name="rememberme"
+                  checked={rememberme}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label" htmlFor="rememberme">
+                  Remember password
+                </label>
+              </div>
               <br />
-              <form onSubmit={handleSubmit}>
-                <div className="form-floating mb-3">
-                  <label htmlFor="email">Email address</label>
-                  <input
-                    className="form-control"
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="form-floating mb-3">
-                  <label htmlFor="password">Password</label>
-
-                  <input
-                    className="form-control"
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={handleChange}
-                  />
-                  <div className="password-toggle">
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="show-password"
-                    >
-                      {showPassword ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-check mb-3">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="rememberme"
-                    name="rememberme"
-                    checked={rememberme}
-                    onChange={handleChange}
-                  />
-                  <label className="form-check-label" htmlFor="rememberme">
-                    Remember password
-                  </label>
-                </div>
-                <br />
-                <div className="d-grid mb-2">
-                  <button
-                    className="btn btn-primary btn-login text-uppercase fw-bold"
-                    type="submit"
-                  >
-                    Sign in
-                  </button>
-                </div>
-                <br />
-                <div className="d-grid mb-2">
-                  <button
-                    className="btn btn-primary btn-login text-uppercase fw-bold"
-                    onClick={handleRegisterClick}
-                  >
-                    Register
-                  </button>
-                </div>
-                <hr className="my-4" />
-                <div className="d-grid mb-2">
-                  <button
-                    className="btn btn-google btn-login text-uppercase fw-bold"
-                    type="button"
-                  >
-                    <i className="fa-brands fa-google me-2"></i> Sign in with
-                    Google
-                  </button>
-                </div>
-                <br />
-                <div className="d-grid mb-2">
-                  <button
-                    className="btn btn-facebook btn-login text-uppercase fw-bold"
-                    type="button"
-                  >
-                    <i className="fa-brands fa-facebook-f me-2"></i> Sign in
-                    with Facebook
-                  </button>
-                </div>
-              </form>
-              {error && <p className="error">{error}</p>}
-            </div>
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-primary btn-login text-uppercase fw-bold"
+                  type="submit"
+                >
+                  Sign in
+                </button>
+              </div>
+              <br />
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-primary btn-login text-uppercase fw-bold"
+                  onClick={handleRegisterClick}
+                >
+                  Register
+                </button>
+              </div>
+              <hr className="my-4" />
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-google btn-login text-uppercase fw-bold"
+                  type="button"
+                >
+                  <i className="fa-brands fa-google me-2"></i> Sign in with Google
+                </button>
+              </div>
+              <br />
+              <div className="d-grid mb-2">
+                <button
+                  className="btn btn-facebook btn-login text-uppercase fw-bold"
+                  type="button"
+                >
+                  <i className="fa-brands fa-facebook-f me-2"></i> Sign in with Facebook
+                </button>
+              </div>
+            </form>
+            {error && <p className="error">{error}</p>}
           </div>
         </div>
       </div>
