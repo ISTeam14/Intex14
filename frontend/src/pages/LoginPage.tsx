@@ -6,7 +6,7 @@ function LoginPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [, setRememberme] = useState<boolean>(false);
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
@@ -99,6 +99,15 @@ function LoginPage() {
                   value={password}
                   onChange={handleChange}
                 />
+                <div className="password-toggle">
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="show-password"
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
                 <div className="d-grid mb-2">
                   <br></br>
                   <button
@@ -107,7 +116,8 @@ function LoginPage() {
                   >
                     Sign in
                   </button>
-                  <br/><br/>
+                  <br />
+                  <br />
                 </div>
                 <div className="password-toggle">
                   <button
