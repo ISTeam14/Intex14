@@ -40,7 +40,6 @@ function LoginPage() {
       return;
     }
 
-
     const loginUrl =
       'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/login?useCookies=true';
 
@@ -108,9 +107,9 @@ function LoginPage() {
                     Register
                   </button>
                 </div>
-              </form>
-              {error && <p className="error">{error}</p>}
-            </div>
+              </div>
+            </form>
+            {error && <p className="error">{error}</p>}
           </div>
         </div>
       </div>
