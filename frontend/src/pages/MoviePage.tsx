@@ -4,6 +4,7 @@ import MovieCard from '../components/MovieCard';
 import Header from '../components/Header';
 import AuthorizeView from '../components/AuthorizeView';
 
+
 function MoviePage() {
   const location = useLocation();
 

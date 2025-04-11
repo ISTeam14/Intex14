@@ -40,7 +40,9 @@ function LoginPage() {
       return;
     }
 
-    const loginUrl = 'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/login?useCookies=true';
+
+    const loginUrl =
+      'https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/login?useCookies=true';
 
     try {
       const response = await fetch(loginUrl, {
@@ -100,66 +102,15 @@ function LoginPage() {
                 />
                 <div className="password-toggle">
                   <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="show-password"
+                    className="btn btn-primary btn-login text-uppercase fw-bold"
+                    onClick={handleRegisterClick}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    Register
                   </button>
                 </div>
-              </div>
-
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="rememberme"
-                  name="rememberme"
-                  checked={rememberme}
-                  onChange={handleChange}
-                />
-                <label className="form-check-label" htmlFor="rememberme">
-                  Remember password
-                </label>
-              </div>
-              <br />
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  type="submit"
-                >
-                  Sign in
-                </button>
-              </div>
-              <br />
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  onClick={handleRegisterClick}
-                >
-                  Register
-                </button>
-              </div>
-              <hr className="my-4" />
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-google btn-login text-uppercase fw-bold"
-                  type="button"
-                >
-                  <i className="fa-brands fa-google me-2"></i> Sign in with Google
-                </button>
-              </div>
-              <br />
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-facebook btn-login text-uppercase fw-bold"
-                  type="button"
-                >
-                  <i className="fa-brands fa-facebook-f me-2"></i> Sign in with Facebook
-                </button>
-              </div>
-            </form>
-            {error && <p className="error">{error}</p>}
+              </form>
+              {error && <p className="error">{error}</p>}
+            </div>
           </div>
         </div>
       </div>

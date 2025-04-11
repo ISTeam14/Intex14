@@ -25,12 +25,12 @@ function SearchBar() {
     setHasSearched(true);
     setLoading(true);
     try {
-      let url = `https://localhost:5000/Movie/SearchMovies?query=${encodeURIComponent(query)}`;
+      let url = `https://intex14-backend-fpc2beauh7cmhfb6.eastus-01.azurewebsites.net/Movie/SearchMovies?query=${encodeURIComponent(query)}`;
       if (selectedGenres.length > 0) {
         url += `&genres=${selectedGenres.join(',')}`;
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: 'include' });
       if (!res.ok) throw new Error('Bad response from search API');
 
       const data = await res.json();

@@ -1,11 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+// MoviesPage.tsx
+import { useState, useEffect, useRef, useContext } from 'react';
 import { Movie } from '../types/Movie';
 import Header from '../components/Header';
 import CategoryRow from '../components/CategoryRow';
 import { useNavigate } from 'react-router-dom';
-import { fetchMoviesByGenrePaged } from '../api/MovieAPI';
-import AuthorizeView from '../components/AuthorizeView';
+import {
+  fetchMoviesByGenrePaged,
+  fetchHybridRecommendationsByEmail,
+} from '../api/MovieAPI';
+import AuthorizeView, { UserContext } from '../components/AuthorizeView';
 import Footer from '../components/Footer';
+import UserRecsRow from '../components/UserRecsRow';
+
 
 
 function MoviesPage() {
@@ -18,15 +24,15 @@ function MoviesPage() {
 
 function AuthorizedMoviesContent() {
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
+  // State for genre-based carousels
   const [moviesByGenre, setMoviesByGenre] = useState<Record<string, Movie[]>>(
     {}
   );
   const [genrePages, setGenrePages] = useState<Record<string, number>>({});
   const [genreTotals, setGenreTotals] = useState<Record<string, number>>({});
   const [genreToPageNext, setGenreToPageNext] = useState<string | null>(null);
-
-  // Initially load only 'action' and 'comedies'
   const [loadedGenres, setLoadedGenres] = useState<string[]>([
     'action',
     'comedies',
@@ -40,13 +46,14 @@ function AuthorizedMoviesContent() {
     'family_movies',
     'fantasy',
   ];
-
   const [loading, setLoading] = useState(true);
   const [isPaging, setIsPaging] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Flag to enable lazy loading only after the user scrolls at least a bit.
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  // New state for hybrid recommendations based on user watch history.
+  const [hybridRecs, setHybridRecs] = useState<Movie[]>([]);
+  const [loadingHybrid, setLoadingHybrid] = useState(true);
 
   // Compute if all movies have been loaded for every genre.
   const allLoaded =
@@ -68,7 +75,7 @@ function AuthorizedMoviesContent() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [hasScrolled]);
 
-  // Load movies for genres in loadedGenres if they haven't been fetched yet.
+  // Load movies for each genre in loadedGenres.
   useEffect(() => {
     const loadGenres = async () => {
       setLoading(true);
@@ -95,11 +102,10 @@ function AuthorizedMoviesContent() {
     loadGenres();
   }, [loadedGenres]);
 
-  // Use an Intersection Observer to trigger lazy loading additional genres or pages.
+  // Lazy load additional genres or pages when needed.
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (loading) return;
-
     const observer = new IntersectionObserver(
       (entries, obs) => {
         if (!hasScrolled) return;
@@ -110,11 +116,9 @@ function AuthorizedMoviesContent() {
         const entry = entries[0];
         if (entry.isIntersecting && !isPaging && !genreToPageNext) {
           if (loadedGenres.length < allGenres.length) {
-            // Add the next genre when available.
             const nextGenre = allGenres[loadedGenres.length];
             setLoadedGenres((prev) => [...prev, nextGenre]);
           } else {
-            // Otherwise, find a genre that still has more pages to load.
             const genreForPaging = allGenres.find((g) => {
               const total = genreTotals[g] || 0;
               const current = moviesByGenre[g]?.length || 0;
@@ -126,11 +130,8 @@ function AuthorizedMoviesContent() {
           }
         }
       },
-      {
-        rootMargin: '100px', // Fire when the sentinel is near the viewport.
-      }
+      { rootMargin: '100px' }
     );
-
     const sentinel = sentinelRef.current;
     if (sentinel) {
       observer.observe(sentinel);
@@ -150,15 +151,14 @@ function AuthorizedMoviesContent() {
     allLoaded,
   ]);
 
-  // Load the next page for a genre when needed.
+  // Load next page for a genre when needed.
   useEffect(() => {
     if (!genreToPageNext) return;
     const loadNextPage = async () => {
       setIsPaging(true);
       try {
         const currentPage = genrePages[genreToPageNext] || 1;
-        // UX delay
-        await new Promise((res) => setTimeout(res, 300));
+        await new Promise((res) => setTimeout(res, 300)); // small delay for UX
         const { movies, total } = await fetchMoviesByGenrePaged(
           genreToPageNext,
           currentPage,
@@ -172,10 +172,7 @@ function AuthorizedMoviesContent() {
           ...prev,
           [genreToPageNext]: currentPage + 1,
         }));
-        setGenreTotals((prev) => ({
-          ...prev,
-          [genreToPageNext]: total,
-        }));
+        setGenreTotals((prev) => ({ ...prev, [genreToPageNext]: total }));
       } catch (err) {
         console.error('Error loading next page:', err);
       } finally {
@@ -186,13 +183,35 @@ function AuthorizedMoviesContent() {
     loadNextPage();
   }, [genreToPageNext, genrePages]);
 
+  // Use the hybrid recommender API to load recommendations based on user's watch history.
+  useEffect(() => {
+    const loadHybridRecs = async () => {
+      if (user && user.email) {
+        try {
+          const recs = await fetchHybridRecommendationsByEmail(user.email);
+          setHybridRecs(recs);
+        } catch (error) {
+          console.error('Error fetching hybrid recommendations:', error);
+          setHybridRecs([]);
+        } finally {
+          setLoadingHybrid(false);
+        }
+      } else {
+        // If there's no user info, simply set empty recs.
+        setHybridRecs([]);
+        setLoadingHybrid(false);
+      }
+    };
+    loadHybridRecs();
+  }, [user]);
+
   const handleSelect = (show_id: string) => {
     navigate('/movie', { state: { show_id } });
   };
 
   if (error) return <p>Error: {error}</p>;
 
-  // Ensure that the initially loaded genres ("action" and "comedies") are ready before rendering.
+  // Ensure the initial genres are ready before rendering carousels.
   const initialGenresReady = ['action', 'comedies'].every(
     (genre) => moviesByGenre[genre]
   );
@@ -205,7 +224,28 @@ function AuthorizedMoviesContent() {
   return (
     <div style={{ paddingTop: '80px', minHeight: '100vh' }}>
       <Header />
+      
+      <UserRecsRow onSelect={handleSelect} />
 
+      {/* New Hybrid Recommendations Carousel */}
+      {loadingHybrid ? (
+        <p style={{ textAlign: 'center', color: '#ccc' }}>
+          Loading recommendations...
+        </p>
+      ) : hybridRecs.length > 0 ? (
+        <CategoryRow
+          key="hybridRecs"
+          title="Based on Your Watch History"
+          movies={hybridRecs}
+          onSelect={handleSelect}
+        />
+      ) : (
+        <p style={{ textAlign: 'center', color: '#ccc' }}>
+          No watch history recommendations available.
+        </p>
+      )}
+
+      {/* Existing Genre Carousels */}
       {loadedGenres.map((genre) => (
         <CategoryRow
           key={genre}
@@ -217,14 +257,12 @@ function AuthorizedMoviesContent() {
         />
       ))}
 
-      {/* If everything is loaded, show an end-of-content message */}
       {allLoaded && (
         <p style={{ textAlign: 'center', color: '#999', marginTop: '2rem' }}>
           🎉 You've reached the end!
         </p>
       )}
 
-      {/* The sentinel element triggers the Intersection Observer */}
       <div ref={sentinelRef} />
 
       <Footer />
