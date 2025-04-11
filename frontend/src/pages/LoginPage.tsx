@@ -99,6 +99,16 @@ function LoginPage() {
                   value={password}
                   onChange={handleChange}
                 />
+                <div className="d-grid mb-2">
+                  <br></br>
+                  <button
+                    className="btn btn-primary btn-login text-uppercase fw-bold"
+                    type="submit"
+                  >
+                    Sign in
+                  </button>
+                  <br/><br/>
+                </div>
                 <div className="password-toggle">
                   <button
                     className="btn btn-primary btn-login text-uppercase fw-bold"
