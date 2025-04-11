@@ -5,19 +5,28 @@ import { NavLink } from 'react-router-dom';
 
 function Header() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [showConsent, setShowConsent] = useState(false);
 
   useEffect(() => {
-    const saved = document.cookie
+    const consent = document.cookie
       .split('; ')
-      .find(row => row.startsWith('theme='))
-      ?.split('=')[1];
-    if (saved) {
-      setTheme(saved as 'light' | 'dark');
-      document.body.classList.toggle('light-mode', saved === 'light');
+      .find(row => row.startsWith('cookieConsent='));
+    
+    if (!consent) {
+      setShowConsent(true);
     } else {
-      setTheme('dark');
-      document.body.classList.remove('light-mode');
-      document.cookie = 'theme=dark; path=/';
+      const saved = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('theme='))
+        ?.split('=')[1];
+
+      if (saved) {
+        setTheme(saved as 'light' | 'dark');
+        document.body.classList.toggle('light-mode', saved === 'light');
+      } else {
+        setTheme('dark');
+        document.body.classList.remove('light-mode');
+      }
     }
   }, []);
 
@@ -26,6 +35,12 @@ function Header() {
     setTheme(newTheme);
     document.body.classList.toggle('light-mode', newTheme === 'light');
     document.cookie = `theme=${newTheme}; path=/`;
+  };
+
+  const handleAcceptCookies = () => {
+    document.cookie = 'cookieConsent=true; path=/';
+    document.cookie = `theme=${theme}; path=/`;
+    setShowConsent(false);
   };
 
   return (
@@ -55,6 +70,13 @@ function Header() {
           </div>
         </div>
       </header>
+
+      {showConsent && (
+        <div className="cookie-banner">
+          <p>This site uses cookies to remember your theme preference. 🍪</p>
+          <button onClick={handleAcceptCookies}>Accept</button>
+        </div>
+      )}
     </>
   );
 }
