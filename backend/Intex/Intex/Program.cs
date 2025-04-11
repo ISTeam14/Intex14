@@ -28,6 +28,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
+{
+    var apiKey = Environment.GetEnvironmentVariable("7HOQZdhuVLoKQktE+dHHc0/RfJPG73S2o3I+7u8y1oI=");
+    // Use the apiKey in some configuration or service setup
+}
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
@@ -86,6 +91,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapIdentityApi<IdentityUser>();
+
+    //Test endpoint to check environment variable
+app.MapGet("/test-api-key", (HttpContext context) =>
+{
+    // Access the environment variable
+    var apiKey = Environment.GetEnvironmentVariable("API_KEY");
+
+    // Return it in the response to confirm if it was loaded correctly
+    return Results.Ok(new { apiKey });
+});
 
 app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> signInManager) =>
 {
