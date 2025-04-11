@@ -34,16 +34,12 @@ function AuthorizedMoviesContent() {
   const [genreTotals, setGenreTotals] = useState<Record<string, number>>({});
   const [genreToPageNext, setGenreToPageNext] = useState<string | null>(null);
   const [loadedGenres, setLoadedGenres] = useState<string[]>([
-    'action',
-    'comedies',
+    'family_movies',
+    'horror_movies',
   ]);
   const allGenres = [
-    'action',
-    'comedies',
     'documentaries',
-    'dramas',
     'horror_movies',
-    'family_movies',
     'fantasy',
   ];
   const [loading, setLoading] = useState(true);
@@ -212,7 +208,7 @@ function AuthorizedMoviesContent() {
   if (error) return <p>Error: {error}</p>;
 
   // Ensure the initial genres are ready before rendering carousels.
-  const initialGenresReady = ['action', 'comedies'].every(
+  const initialGenresReady = ['family_movies', 'horror_movies'].every(
     (genre) => moviesByGenre[genre]
   );
   if (!initialGenresReady) {
@@ -225,7 +221,7 @@ function AuthorizedMoviesContent() {
     <div style={{ paddingTop: '80px', minHeight: '100vh' }}>
       <Header />
       
-      <UserRecsRow onSelect={handleSelect} />
+      
 
       {/* New Hybrid Recommendations Carousel */}
       {loadingHybrid ? (
@@ -244,6 +240,8 @@ function AuthorizedMoviesContent() {
           No watch history recommendations available.
         </p>
       )}
+
+  <UserRecsRow onSelect={handleSelect} />
 
       {/* Existing Genre Carousels */}
       {loadedGenres.map((genre) => (

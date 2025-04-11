@@ -30,12 +30,58 @@ function UserRecsRow({ onSelect }: Props) {
 
   if (loading || movies.length === 0) return null;
 
+  // ✅ 1. Top 10 overall
+  const top10 = movies.slice(0, 10);
+
+  // ✅ 2. Group by genre flag fields
+  const genreBuckets: Record<string, Movie[]> = {
+    Action: [],
+    Dramas: [],
+    Adventure: [],
+    Comedies: [],
+  };
+
+  for (const movie of movies) {
+    if (movie.action && genreBuckets.Action.length < 10) {
+      genreBuckets.Action.push(movie);
+    }
+    if (movie.dramas && genreBuckets.Dramas.length < 10) {
+      genreBuckets.Dramas.push(movie);
+    }
+    if (movie.adventure && genreBuckets.Adventure.length < 10) {
+      genreBuckets.Adventure.push(movie);
+    }
+    if (movie.comedies && genreBuckets.Comedies.length < 10) {
+      genreBuckets.Comedies.push(movie);
+    }
+  }
+
+  // ✅ 3. Custom ordered carousel layout
+  const orderedSections = [
+    { label: 'Recommended for You', key: 'all' },
+    { label: 'Recommended Action', key: 'Action' },
+    { label: 'Recommended Dramas', key: 'Dramas' },
+    { label: 'Recommended Adventure', key: 'Adventure' },
+    { label: 'Recommended Comedies', key: 'Comedies' },
+  ];
+
   return (
-    <CategoryRow
-      title="Recommended for You"
-      movies={movies}
-      onSelect={onSelect}
-    />
+    <>
+      {orderedSections.map(({ label, key }, i) => (
+        <div key={label}>
+          {i === 2 && (
+            <div style={{ padding: '2rem 0', textAlign: 'center' }}>
+            </div>
+          )}
+
+          <CategoryRow
+            title={label}
+            movies={key === 'all' ? top10 : genreBuckets[key] || []}
+            onSelect={onSelect}
+          />
+        </div>
+      ))}
+    </>
   );
 }
 
